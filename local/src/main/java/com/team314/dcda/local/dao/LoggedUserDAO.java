@@ -20,9 +20,7 @@ public class LoggedUserDAO extends GenericDAO<LoggedUser, Integer>{
 		super(LoggedUser.class);
 	}
 
-	/*
-	 * validateToken returns 1 for valid, 2 for expired, -1 for not valid
-	 */
+	
 	public String validateToken(int userid, String token) throws UnauthorizedException, ForbiddenException
 	{
 		LoggedUser loggedUser = em.find(LoggedUser.class, userid);
@@ -56,6 +54,25 @@ public class LoggedUserDAO extends GenericDAO<LoggedUser, Integer>{
 				throw new UnauthorizedException();
 			}
 			
+		}
+		
+	} 
+	
+	public String validateToken(int userid, String token, String role) throws UnauthorizedException, ForbiddenException
+	{
+		LoggedUser loggedUser = em.find(LoggedUser.class, userid);
+		if(loggedUser == null)
+		{
+			throw new UnauthorizedException();
+		}
+		else
+		{	
+			if(!loggedUser.getRole().equals(role))
+			{
+				throw new UnauthorizedException();
+			}
+			
+			return validateToken(userid, token);
 		}
 		
 	} 

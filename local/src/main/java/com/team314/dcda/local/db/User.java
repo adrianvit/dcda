@@ -37,8 +37,8 @@ public class User implements Serializable{
 	@Column(name = "pass")
 	private String pass;
 	
-	@Column(name = "county")
-	private String county;
+	@Column(name = "role")
+	private String role;
 	
 
 	public Integer getUserId() {
@@ -90,12 +90,12 @@ public class User implements Serializable{
 	}
 	
 
-	public String getCounty() {
-		return county;
+	public String getRole() {
+		return role;
 	}
 
-	public void setCounty(String county) {
-		this.county = county;
+	public void setRole(String role) {
+		this.role = role;
 	}
 
 	@Override

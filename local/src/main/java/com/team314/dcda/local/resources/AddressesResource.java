@@ -48,7 +48,7 @@ public class AddressesResource {
 	public Response getAddresses(@PathParam("id") Integer id, @Context HttpHeaders headers)
 	{		
 		try {
-			Boolean valid = Utils.validateToken(id, headers, loggedUserDao);
+			Boolean valid = Utils.validateToken(id, headers, loggedUserDao, "user");
 			
 			if(valid)
 			{
@@ -88,7 +88,7 @@ public class AddressesResource {
 		
 		
 		try {
-			Boolean valid = Utils.validateToken(id, headers, loggedUserDao);
+			Boolean valid = Utils.validateToken(id, headers, loggedUserDao, "user");
 			
 			if(valid)
 			{

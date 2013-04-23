@@ -32,6 +32,9 @@ public class LoggedUser implements Serializable{
     @Column(name = "expiration")
     @Temporal(TemporalType.TIMESTAMP)
     private Date expiration;
+    
+    @Column(name = "role")
+    private String role;
 
 	public Integer getUserid() {
 		return userid;
@@ -57,7 +60,15 @@ public class LoggedUser implements Serializable{
 		this.expiration = validFrom;
 	}
 	
-    @Override
+    public String getRole() {
+		return role;
+	}
+
+	public void setRole(String role) {
+		this.role = role;
+	}
+
+	@Override
     public int hashCode() {
         int hash = 0;
         hash += (userid != null ? userid.hashCode() : 0);

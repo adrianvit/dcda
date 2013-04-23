@@ -128,7 +128,7 @@ public class Utils {
 	}
 	
 	
-	public static boolean validateToken(int id, HttpHeaders headers, LoggedUserDAO loggedUserDao) throws UnauthorizedException, ForbiddenException
+	public static boolean validateToken(int id, HttpHeaders headers, LoggedUserDAO loggedUserDao, String role) throws UnauthorizedException, ForbiddenException
 	{
 		String token = null;
 		try
@@ -144,7 +144,7 @@ public class Utils {
 		{
 			String valid = null;
 			try {
-				valid = loggedUserDao.validateToken(id, token);
+				valid = loggedUserDao.validateToken(id, token, role);
 			} catch (UnauthorizedException e) {
 				throw e;
 			} catch (ForbiddenException e) {
