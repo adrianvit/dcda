@@ -46,7 +46,7 @@ public class AddressResource {
 	public Response get(@PathParam("id") Integer id, @PathParam("address_id") Integer address_id, @Context HttpHeaders headers)
 	{
 		try {
-			Boolean valid = Utils.validateToken(id, headers, loggedUserDao);
+			Boolean valid = Utils.validateToken(id, headers, loggedUserDao, "user");
 			
 			if(valid)
 			{
@@ -85,7 +85,7 @@ public class AddressResource {
 	{
 		
 		try {
-			Boolean valid = Utils.validateToken(id, headers, loggedUserDao);
+			Boolean valid = Utils.validateToken(id, headers, loggedUserDao, "user");
 			
 			if(valid)
 			{
@@ -134,7 +134,7 @@ public class AddressResource {
 	public Response delete(@PathParam("id") int id, @PathParam("address_id") Integer address_id, @Context HttpHeaders headers)
 	{
 		try {
-			Boolean valid = Utils.validateToken(id, headers, loggedUserDao);
+			Boolean valid = Utils.validateToken(id, headers, loggedUserDao, "user");
 			
 			if(valid)
 			{

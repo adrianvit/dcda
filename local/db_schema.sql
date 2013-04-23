@@ -10,7 +10,7 @@ CREATE TABLE users
   phone character varying(20) NOT NULL,
   email character varying(200) NOT NULL,
   pass character varying(100) NOT NULL,
-  county character varying(100) NOT NULL,
+  role character varying(100) NOT NULL,
   CONSTRAINT pk_userid PRIMARY KEY (userid)
 )
 WITH (
@@ -53,6 +53,7 @@ CREATE TABLE loggedusers
   userid bigint NOT NULL,
   token character varying(36),
   expiration timestamp(6) with time zone,
+  role character varying(100) NOT NULL,
   CONSTRAINT pk_logged PRIMARY KEY (userid)
 )
 WITH (

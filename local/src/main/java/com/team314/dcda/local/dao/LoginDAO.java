@@ -54,6 +54,7 @@ public class LoginDAO {
     			temp.setUserid(user.getUserId());
     			temp.setExpiration(timestamp);
     			temp.setToken(UUID.randomUUID().toString());
+    			temp.setRole(user.getRole());
     			loggedUserDAO.create(temp);
     			LOG.debug("Created new logged user {}", user.getUserId());
     		}
