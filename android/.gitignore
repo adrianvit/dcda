@@ -14,3 +14,4 @@ local.properties
 bin/
 gen/
 proguard/
+!gson-2.2.1.jar
