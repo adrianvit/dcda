@@ -42,7 +42,7 @@ public class ProductsResource {
 	{
 		List<Product> products = this.productdao.getProductList();
 		
-		if(products==null ||products.size()==0)
+		if(products==null || products.size()==0)
 		{
 			throw new WebApplicationException(new Throwable("Products not found!"), 404);
 		}

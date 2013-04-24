@@ -70,7 +70,7 @@ CREATE TABLE products
 (
   productid bigint NOT NULL,
   description text,
-  category character varying(100) NOT NULL,
+  category integer NOT NULL,
   quantity integer NOT NULL,
   price integer NOT NULL,
   CONSTRAINT pk_product PRIMARY KEY (productid)
