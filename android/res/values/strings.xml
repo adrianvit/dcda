@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="hello">Hello World, RentActivity!</string>
+    <string name="app_name">PackageManager</string>
+    <string name="map_name">Map</string>
+    <string name="main_title">Package Management</string>
+    <string name="username_label">Username</string>
+    <string name="password_label">Password</string>
+    <string name="login_button">Login</string>
+    <string name="signup_button">Sign Up</string>
+    <string name="browse_button">Browse</string>
+    <string name="search_button">Search for products</string>
+    <string name="myAccount_button">My Account</string>
+    <string name="about_button">About</string>
+    <string name="exit_button">Exit</string>
+    <string name="menu_name">Main Menu</string>
+    <string name="desc">A photo showing the list is empty</string>
+    <string name="carList_name">Browse Cars</string>
+    <string name="about">This applicatio allows users to interact with our car rental webservice.</string>
+    <string name="about_name">About</string>
+    <string name="textView_firstname">First Name</string>
+    <string name="textView_lastname">Last Name</string>
+    <string name="textView_phone">Phone</string>
+    <string name="textView_email">E-mail</string>
+    <string name="textView_pass">Password</string>
+    <string name="textView_passconf">Confirm password</string>
+    <string name="button_done">Sign Up</string>
+    <string name="button_ok">OK</string>
+    <string name="button_adr">Addresses</string>
+    <string name="button_pass">Change password</string>
+    <string name="button_save">Save changes</string>
+    <string name="textView_oldpass">Old Password</string>
+    <string name="textView_newpass">New Password</string>
+    <string name="button_rent">Rent</string>
+    <string name="button_map">Map</string>
+    <string name="button_comments">Comms</string>
+    <string name="button_gallery">Gallery</string>
+    <string name="to">To</string>
+    <string name="from">From</string>
+    <string name="rent">Rent</string>
+    <string name="button_unlock">Unlock</string>
+    <string name="help_button">Help</string>
+    <string name="help">If you requre assistance, or have encountered problems using our application, please call [support_number]</string>
+    <string name="button_search">Search</string>
+    <string name="advanced_search">Advanced Search</string>
+    <string name="textView_country">Country</string>
+    <string name="textView_county">County</string>
+    <string name="textView_city">City</string>
+    <string name="textView_street">Street</string>
+    <string name="textView_postal_code">Postal Code</string>
+    <string name="textView_street_number">Number</string>
+    <string name="add_adr">Add address</string>
+
+</resources>

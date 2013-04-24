@@ -1,0 +1,16 @@
+.classpath
+.project
+.settings/
+target/
+*.class
+# Package Files #
+*.jar
+*.war
+*.ear
+local.properties
+*.dex
+*.apk
+*.ap_
+bin/
+gen/
+proguard/
