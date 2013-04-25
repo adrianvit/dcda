@@ -18,7 +18,7 @@ import javax.xml.bind.annotation.XmlTransient;
 
 
 @Entity
-@Table(name = "addresses")
+@Table(name = "local.addresses")
 @XmlRootElement(name = "address")
 public class Address implements Serializable{
 
