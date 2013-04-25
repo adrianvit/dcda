@@ -28,7 +28,6 @@ public class Utils {
 	public static final String central_ip = "localhost";
 	public static final String central_path = "central/locate";
 	public static final String central_path_register = "central/register";
-	public static final String destination_transfer = "car_rental/resources/transfer";
 	public static final String scheme  = "http";
 	private static final Logger LOG = LoggerFactory.getLogger(Utils.class);
 	
