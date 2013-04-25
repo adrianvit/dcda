@@ -71,4 +71,8 @@
 			<version>1.8</version>
 		</dependency>
 	</dependencies>
+
+	<build>
+		<finalName>local</finalName>
+	</build>
 </project>

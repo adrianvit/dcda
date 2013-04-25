@@ -1,8 +1,8 @@
 -- Table: users
 
--- DROP TABLE users;
+-- DROP TABLE local.users;
 
-CREATE TABLE users
+CREATE TABLE local.users
 (
   userid bigint NOT NULL,
   firstname character varying(50),
@@ -16,14 +16,14 @@ CREATE TABLE users
 WITH (
   OIDS=FALSE
 );
-ALTER TABLE users OWNER TO postgres;
+ALTER TABLE local.users OWNER TO postgres;
 
 
 -- Table: addresses
 
--- DROP TABLE addresses;
+-- DROP TABLE local.addresses;
 
-CREATE TABLE addresses
+CREATE TABLE local.addresses
 (
   addressid bigserial NOT NULL,
   country character varying(50) NOT NULL,
@@ -35,20 +35,20 @@ CREATE TABLE addresses
   userid bigint NOT NULL,
   CONSTRAINT pk_addressid PRIMARY KEY (addressid),
   CONSTRAINT fk_userid FOREIGN KEY (userid)
-      REFERENCES users (userid) MATCH SIMPLE
+      REFERENCES local.users (userid) MATCH SIMPLE
       ON UPDATE NO ACTION ON DELETE CASCADE
 )
 WITH (
   OIDS=FALSE
 );
-ALTER TABLE addresses OWNER TO postgres;
+ALTER TABLE local.addresses OWNER TO postgres;
 
 
 -- Table: loggedusers
 
--- DROP TABLE loggedusers;
+-- DROP TABLE local.loggedusers;
 
-CREATE TABLE loggedusers
+CREATE TABLE local.loggedusers
 (
   userid bigint NOT NULL,
   token character varying(36),
@@ -59,14 +59,14 @@ CREATE TABLE loggedusers
 WITH (
   OIDS=FALSE
 );
-ALTER TABLE loggedusers OWNER TO postgres;
+ALTER TABLE local.loggedusers OWNER TO postgres;
 
 
 -- Table: products
 
--- DROP TABLE products;
+-- DROP TABLE local.products;
 
-CREATE TABLE products
+CREATE TABLE local.products
 (
   productid bigint NOT NULL,
   description text,
@@ -78,4 +78,4 @@ CREATE TABLE products
 WITH (
   OIDS=FALSE
 );
-ALTER TABLE products OWNER TO postgres;
+ALTER TABLE local.products OWNER TO postgres;
