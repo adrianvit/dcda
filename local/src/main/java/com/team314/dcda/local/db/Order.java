@@ -15,7 +15,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
 
 @Entity
-@Table(name = "orders")
+@Table(name = "local.orders")
 @XmlRootElement(name = "order")
 public class Order implements Serializable{
 

@@ -11,7 +11,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 
 
 @Entity
-@Table(name = "users")
+@Table(name = "local.users")
 @XmlRootElement(name = "user")
 public class User implements Serializable{
 	

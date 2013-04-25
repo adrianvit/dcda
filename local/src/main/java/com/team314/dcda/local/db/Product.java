@@ -12,7 +12,7 @@ import javax.persistence.Table;
 import javax.xml.bind.annotation.XmlRootElement;
 
 @Entity
-@Table(name = "products")
+@Table(name = "local.products")
 @XmlRootElement(name = "product")
 public class Product implements Serializable{
 
