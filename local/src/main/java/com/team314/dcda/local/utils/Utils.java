@@ -16,6 +16,7 @@ import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.impl.conn.PoolingClientConnectionManager;
+import org.apache.http.impl.conn.tsccm.ThreadSafeClientConnManager;
 import org.apache.http.params.HttpParams;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -29,18 +30,19 @@ public class Utils {
 	public static final String central_path = "central/locate";
 	public static final String central_path_register = "central/register";
 	public static final String scheme  = "http";
+	public static final int central_port = 18080;
 	private static final Logger LOG = LoggerFactory.getLogger(Utils.class);
 	
 	public static DefaultHttpClient getThreadSafeClient() {
 		  
 	    DefaultHttpClient client = new DefaultHttpClient();
 	    HttpParams params = client.getParams();
-	    PoolingClientConnectionManager threadSafeClientConnectionManager = new PoolingClientConnectionManager();
+		ThreadSafeClientConnManager threadSafeClientConnectionManager = new ThreadSafeClientConnManager();
 	    
 	    client = new DefaultHttpClient( threadSafeClientConnectionManager, params);
 	  
 	    return client;
-	} 
+	}
 
 	
 	public static String readInputStream(InputStream input) throws IOException

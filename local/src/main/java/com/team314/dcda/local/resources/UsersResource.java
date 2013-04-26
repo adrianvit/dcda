@@ -60,7 +60,7 @@ public class UsersResource {
 		URI uri = null;
 		try {
 			String temp = "email="+email;
-			uri = URIUtils.createURI(Utils.scheme, Utils.central_ip, 8080, Utils.central_path_register, temp, null);
+			uri = URIUtils.createURI(Utils.scheme, Utils.central_ip, Utils.central_port, Utils.central_path_register, temp, null);
 			LOG.debug("Getting userid for {}", uri.toString());
 			//check if email is unique and return userid
 			String userid = Utils.checkRegistrationEmail(uri);

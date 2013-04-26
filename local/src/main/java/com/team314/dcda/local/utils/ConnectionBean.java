@@ -28,8 +28,8 @@ public class ConnectionBean {
 	
 
 	private static final Logger LOG = LoggerFactory.getLogger(ConnectionBean.class);
-	private static final String ip_url_1 = "http://automation.whatismyip.com/n09230945.asp";
-	private static final String ip_url_2 = "http://api.externalip.net/ip/";
+	private static final String ip_url_1 = "http://api.externalip.net/ip/";
+	private static final String ip_url_2 = "http://automation.whatismyip.com/n09230945.asp";
 
 
 	
@@ -42,7 +42,7 @@ public class ConnectionBean {
 		
 		//get external ip (try two sources if necessary)
 		String local_ip=getIP(httpclient, ip_url_1);
-		if(local_ip != null)
+		if(local_ip == null)
 		{
 			local_ip = getIP(httpclient, ip_url_2);
 		}
@@ -61,7 +61,7 @@ public class ConnectionBean {
 				
 				String temp = "name="+getLocalName()+"&adr="+local_ip.substring(0, local_ip.length()-1);
 				try {
-					uri = URIUtils.createURI(Utils.scheme, Utils.central_ip, 8080, Utils.central_path, temp, null);
+					uri = URIUtils.createURI(Utils.scheme, Utils.central_ip, Utils.central_port, Utils.central_path, temp, null);
 					LOG.info("URI = {}", uri.toString());
 
 				} catch (URISyntaxException e1) {
@@ -99,7 +99,7 @@ public class ConnectionBean {
 	{
 		URI uri = null;
 		try {
-			uri = URIUtils.createURI(Utils.scheme, Utils.central_ip, 8080, Utils.central_path+"/"+localName, "adr="+ip, null);
+			uri = URIUtils.createURI(Utils.scheme, Utils.central_ip, Utils.central_port, Utils.central_path+"/"+localName, "adr="+ip, null);
 			LOG.info("URI = {}", uri.toString());
 			LOG.info("URI = {}", uri.toURL());
 		} catch (URISyntaxException e1) {
@@ -130,7 +130,7 @@ public class ConnectionBean {
 	{
 		URI uri = null;
 		try {
-			uri = URIUtils.createURI(Utils.scheme, Utils.central_ip, 8080, Utils.central_path+"/"+localName, null, null);
+			uri = URIUtils.createURI(Utils.scheme, Utils.central_ip, Utils.central_port, Utils.central_path+"/"+localName, null, null);
 			LOG.info("URI = {}", uri.toString());
 			LOG.info("URI = {}", uri.toURL());
 		} catch (URISyntaxException e1) {
@@ -192,7 +192,7 @@ public class ConnectionBean {
 			return result;
 		}catch(Exception e)
 		{
-			throw new WebApplicationException(new Throwable("Error on GET!"), 500);
+			return null;
 		}
 	}
 
