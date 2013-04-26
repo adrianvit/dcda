@@ -57,7 +57,7 @@ public class RestServiceCalls {
 
 			//get local server ip and store in preferences
 			try {
-				uri = URIUtils.createURI(HttpUtils.scheme, HttpUtils.central_ip, 8080, HttpUtils.central_path + "/" + temp, null, null);
+				uri = URIUtils.createURI(HttpUtils.scheme, HttpUtils.central_ip, HttpUtils.central_port, HttpUtils.central_path + "/" + temp, null, null);
 				Log.d(TAG, "Uri is " + uri.toString());	
 				
 				HttpGet get_method = new HttpGet(uri);
@@ -101,7 +101,7 @@ public class RestServiceCalls {
 			try
 			{
 				String query_params = "email=" + userName +"&password=" + password;
-				uri = URIUtils.createURI(HttpUtils.scheme, HttpUtils.central_ip, 8080, HttpUtils.local_login_path, query_params, null);
+				uri = URIUtils.createURI(HttpUtils.scheme, HttpUtils.central_ip, HttpUtils.central_port, HttpUtils.local_login_path, query_params, null);
 				HttpPost post_method = new HttpPost(uri);
 				Log.d(TAG, "Uri is " + uri.toString());	
 				MyAsyncTask loginAsyncTask = new MyAsyncTask(dialog, new AsyncTaskCallback(){
@@ -161,6 +161,7 @@ public class RestServiceCalls {
 	
 	public static ArrayList<Product> getProducts(final Context context, int start, String filter, final  ArrayAdapter<Product> adapter)
 	{
+		SharedPreferences prefs = context.getSharedPreferences(Utils.PREFS_NAME, 0);
 		URI uri = null;
 		try {
 			String query_params = "start="+start;
@@ -170,7 +171,7 @@ public class RestServiceCalls {
 			}
 			
 			
-			uri = URIUtils.createURI(HttpUtils.scheme, HttpUtils.central_ip, 8080, HttpUtils.local_products, query_params, null);
+			uri = URIUtils.createURI(HttpUtils.scheme, HttpUtils.central_ip, HttpUtils.local_port, HttpUtils.local_products, query_params, null);
 			Log.d(TAG, "Uri is " + uri.toString());	
 			HttpGet get_method = new HttpGet(uri);
 			
@@ -218,76 +219,13 @@ public class RestServiceCalls {
 		return null;
 	}
 	
-	
-	
-/*	public static ArrayList<Picture> getPictures(final Context context, final Car car)
-	{
-		URI uri = null;
-		try {
-			
-			uri = URIUtils.createURI(HttpUtils.scheme, HttpUtils.central_ip, 8080, HttpUtils.local_cars +"/"+car.getCarid()+"/pictures", null, null);
-			Log.d(TAG, "Uri is " + uri.toString());	
-			HttpGet get_method = new HttpGet(uri);
-			
-			MyAsyncTask getPicsAsyncTask = new MyAsyncTask(null, new AsyncTaskCallback(){
-				
-				@Override
-				public void onTaskComplete(HttpResponse response) {
-					
-					int status = response.getStatusLine().getStatusCode();
-					Log.d(TAG, response.getStatusLine().toString());
-					Intent i = new Intent(context, CarActivity.class);
-					Bundle bundle = new Bundle();
-					bundle.putSerializable("car", car);
-					if(status == 200)
-					{
-						
-						try {
-				
-							InputStream input = response.getEntity().getContent();
-							Reader reader = new InputStreamReader(input);	
-							Gson gson = new Gson();
-							ArrayList<Picture> pics = gson.fromJson(reader, new TypeToken<ArrayList<Picture>>(){}.getType());
-							
-							Log.d(TAG, "Pics size:"+pics.size());
-							
-							ArrayList<String> links = new ArrayList<String> ();
-							for(Picture p: pics)
-							{
-								Log.d(TAG, p.getLink());
-								links.add(p.getLink());
-							}
-							bundle.putStringArrayList("pics", links);
-							
-						} catch (IllegalStateException e1) {
-							Log.e(TAG, "Error reading response [get Pictures]", e1);	
-						} catch (IOException e1) {
-							Log.e(TAG, "Error reading response [get Pictures]", e1);	
-						}
-						
-					}
-					else 
-					{
-						Log.d(TAG, "Didn't receive ok response [get Pictures]");
-					}
-					i.putExtras(bundle);
-					context.startActivity(i);
-					
-				}});
-			getPicsAsyncTask.execute(get_method);
-			Log.d(TAG, "Executed method");
-		} catch (URISyntaxException e1) {
-			Log.e(TAG, "Error creating uri", e1);	
-		}
-		return null;
-	}*/
-	
 	public static void registerUser(User user, final Context context)
 	{
+		SharedPreferences prefs = context.getSharedPreferences(Utils.PREFS_NAME, 0);
 		URI uri = null;
 		try {
 			
-			uri = URIUtils.createURI(HttpUtils.scheme, HttpUtils.central_ip, 8080, HttpUtils.local_users, null, null);
+			uri = URIUtils.createURI(HttpUtils.scheme, HttpUtils.central_ip, HttpUtils.local_port, HttpUtils.local_users, null, null);
 			Log.d(TAG, "Uri is " + uri.toString());	
 			HttpPost post_method = new HttpPost(uri);
 			post_method.setHeader("Content-Type","application/json");
@@ -343,7 +281,7 @@ public class RestServiceCalls {
 				return;
 			}
 			
-			uri = URIUtils.createURI(HttpUtils.scheme, HttpUtils.central_ip, 8080, HttpUtils.local_users + "/" + userid, null, null);
+			uri = URIUtils.createURI(HttpUtils.scheme, HttpUtils.central_ip, HttpUtils.local_port, HttpUtils.local_users + "/" + userid, null, null);
 			Log.d(TAG, "Uri is " + uri.toString());	
 			HttpPut put_method = new HttpPut(uri);
 			put_method.setHeader("Authorization",token);
@@ -381,199 +319,6 @@ public class RestServiceCalls {
 		}
 	}
 	
-	/*public static void rent(final Context context, final String carid, long from, long to)
-	{
-		final SharedPreferences prefs = context.getSharedPreferences(Utils.PREFS_NAME, 0);
-		URI uri = null;
-		try {
-			
-			int userid = prefs.getInt("userid", -1);
-			String token = prefs.getString("token", null);
-			if(userid == -1 || token == null)
-			{
-				Utils.createAlertDialog(context, "Error", "An error ocurred!");
-				return;
-			}
-			
-			String query_params ="userid="+userid+ "&start=" + from +"&end=" + to;
-			
-			uri = URIUtils.createURI(HttpUtils.scheme, HttpUtils.central_ip, 8080, HttpUtils.local_cars + "/" + carid +"/rent", query_params, null);
-			Log.d(TAG, "Uri is " + uri.toString());	
-			HttpPost method = new HttpPost(uri);
-			method.setHeader("Authorization",token);
-		
-			ProgressDialog dialog = new ProgressDialog(context);
-			dialog.setMessage("Please wait");
-			
-			MyAsyncTask asyncTask = new MyAsyncTask(dialog, new AsyncTaskCallback(){
-				
-				@Override
-				public void onTaskComplete(HttpResponse response) {
-					
-					int status = response.getStatusLine().getStatusCode();
-					Log.d(TAG, response.getStatusLine().toString());
-					if(status == 200)
-					{
-						Utils.createAlertDialog(context, "OK", "Car was rented");
-					}
-					else if(status == 409)
-					{
-						Utils.createAlertDialog(context, "Error", "You have already rented a car!");
-					}
-					else
-					{
-						Utils.createAlertDialog(context, "Error", "Could not rent car!");
-					}
-					
-				}});
-			asyncTask.execute(method);
-			Log.d(TAG, "Executed method");
-		} catch (URISyntaxException e1) {
-			Log.e(TAG, "Error creating uri", e1);	
-		}
-	}*/
-	
-	/*
-	public static void rate(final Context context, String carid, int rating)
-	{
-		SharedPreferences prefs = context.getSharedPreferences(Utils.PREFS_NAME, 0);
-		URI uri = null;
-		try {
-			
-			int userid = prefs.getInt("userid", -1);
-			String token = prefs.getString("token", null);
-			if(userid == -1 || token == null)
-			{
-				Utils.createAlertDialog(context, "Error", "An error ocurred!");
-				return;
-			}
-			
-			String query_params ="rating="+rating;
-			
-			uri = URIUtils.createURI(HttpUtils.scheme, HttpUtils.central_ip, 8080, HttpUtils.local_cars + "/" + carid +"/rate", query_params, null);
-			Log.d(TAG, "Uri is " + uri.toString());	
-			HttpPut method = new HttpPut(uri);
-			method.setHeader("Authorization",token);
-		
-			ProgressDialog dialog = new ProgressDialog(context);
-			dialog.setMessage("Please wait");
-			
-			MyAsyncTask asyncTask = new MyAsyncTask(dialog, new AsyncTaskCallback(){
-				
-				@Override
-				public void onTaskComplete(HttpResponse response) {
-					
-					int status = response.getStatusLine().getStatusCode();
-					Log.d(TAG, response.getStatusLine().toString());
-					if(status == 200)
-					{
-						Log.d(TAG, "Rated car ok");
-					}
-					else 
-					{
-						Log.d(TAG, "Error rating car");
-					}
-					
-				}});
-			asyncTask.execute(method);
-			Log.d(TAG, "Executed method");
-		} catch (URISyntaxException e1) {
-			Log.e(TAG, "Error creating uri", e1);	
-		}
-	}
-*/
-	/*public static void getComments(final Context context, int start, String carid, final  ArrayAdapter<Comment> adapter) 
-	{
-		URI uri = null;
-		try {
-			String query_params = "start="+start;
-						
-			uri = URIUtils.createURI(HttpUtils.scheme, HttpUtils.central_ip, 8080, HttpUtils.local_cars + "/" + carid + "/comments", query_params, null);
-			Log.d(TAG, "Uri is " + uri.toString());	
-			HttpGet get_method = new HttpGet(uri);
-			
-			MyAsyncTask asyncTask = new MyAsyncTask(null, new AsyncTaskCallback(){
-				
-				@Override
-				public void onTaskComplete(HttpResponse response) {
-					
-					int status = response.getStatusLine().getStatusCode();
-					Log.d(TAG, response.getStatusLine().toString());
-					if(status == 200)
-					{
-						
-						try {
-				
-							InputStream input = response.getEntity().getContent();
-							Reader reader = new InputStreamReader(input);	
-							Gson gson = new Gson();
-							ArrayList<Comment> cars = gson.fromJson(reader, new TypeToken<ArrayList<Comment>>(){}.getType());
-						    for(Comment c: cars)
-						    {
-						    	adapter.add(c);
-						    }
-						    Log.d(TAG, "Added Comments");
-						    adapter.notifyDataSetChanged();
-							
-						} catch (IllegalStateException e1) {
-							Log.e(TAG, "Error reading response [get Comments]", e1);	
-						} catch (IOException e1) {
-							Log.e(TAG, "Error reading response [get Comments]", e1);	
-						}
-						
-					}
-					else 
-					{
-						Log.d(TAG, "Didn't receive ok response [get Comments]");
-					}
-					
-				}});
-			asyncTask.execute(get_method);
-			Log.d(TAG, "Executed method");
-		} catch (URISyntaxException e1) {
-			Log.e(TAG, "Error creating uri", e1);	
-		}
-	}*/
-	
-	/*public static void addComment(final Context context, String carid, Comment comment) 
-	{
-		URI uri = null;
-		try {
-			
-			uri = URIUtils.createURI(HttpUtils.scheme, HttpUtils.central_ip, 8080, HttpUtils.local_cars + "/" + carid + "/comments", null, null);
-			Log.d(TAG, "Uri is " + uri.toString());	
-			HttpPost method = new HttpPost(uri);
-			method.setHeader("Content-Type","application/json");
-			Gson gson = new Gson();
-			String json = gson.toJson(comment);
-			method.setEntity(new StringEntity(json));
-			
-			MyAsyncTask asyncTask = new MyAsyncTask(null, new AsyncTaskCallback(){
-				
-				@Override
-				public void onTaskComplete(HttpResponse response) {
-					
-					int status = response.getStatusLine().getStatusCode();
-					Log.d(TAG, response.getStatusLine().toString());
-					if(status == 200)
-					{
-						Log.d(TAG, "Added comment");
-					}
-					else 
-					{
-						Log.d(TAG, "Didn't receive ok response [add Comment]");
-					}
-					
-				}});
-			asyncTask.execute(method);
-			Log.d(TAG, "Executed method");
-		} catch (URISyntaxException e1) {
-			Log.e(TAG, "Error creating uri", e1);	
-		} catch (UnsupportedEncodingException e) {
-			e.printStackTrace();
-		}
-	}*/
-
 	public static void getAddresses(final Context context, int i, final ArrayAdapter<Address> adapter) {
 		
 		final SharedPreferences prefs = context.getSharedPreferences(Utils.PREFS_NAME, 0);
@@ -589,7 +334,7 @@ public class RestServiceCalls {
 				return;
 			}
 			
-			uri = URIUtils.createURI(HttpUtils.scheme, HttpUtils.central_ip, 8080, HttpUtils.local_users + "/" + userid + "/addresses", null, null);
+			uri = URIUtils.createURI(HttpUtils.scheme,HttpUtils.central_ip, HttpUtils.local_port, HttpUtils.local_users + "/" + userid + "/addresses", null, null);
 			Log.d(TAG, "Uri is " + uri.toString());	
 			HttpGet get_method = new HttpGet(uri);
 			get_method.setHeader("Authorization",token);
@@ -652,7 +397,7 @@ public class RestServiceCalls {
 				return;
 			}
 			
-			uri = URIUtils.createURI(HttpUtils.scheme, HttpUtils.central_ip, 8080, HttpUtils.local_users + "/" + userid + "/addresses/" + adr.getAddressid(), null, null);
+			uri = URIUtils.createURI(HttpUtils.scheme, HttpUtils.central_ip, HttpUtils.local_port, HttpUtils.local_users + "/" + userid + "/addresses/" + adr.getAddressid(), null, null);
 			Log.d(TAG, "Uri is " + uri.toString());	
 			HttpPut put_method = new HttpPut(uri);
 			put_method.setHeader("Authorization",token);
@@ -705,7 +450,7 @@ public class RestServiceCalls {
 				return;
 			}
 			
-			uri = URIUtils.createURI(HttpUtils.scheme, HttpUtils.central_ip, 8080, HttpUtils.local_users + "/" + userid + "/addresses", null, null);
+			uri = URIUtils.createURI(HttpUtils.scheme, HttpUtils.central_ip, HttpUtils.local_port, HttpUtils.local_users + "/" + userid + "/addresses", null, null);
 			Log.d(TAG, "Uri is " + uri.toString());	
 			HttpPost method = new HttpPost(uri);
 			method.setHeader("Authorization",token);

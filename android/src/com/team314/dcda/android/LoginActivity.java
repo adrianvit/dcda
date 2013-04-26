@@ -31,7 +31,7 @@ public class LoginActivity extends Activity implements OnClickListener{
         
         Button loginButton = (Button) this.findViewById(R.id.buttonLogin);
         loginButton.setOnClickListener(this);
-        //loginButton.setEnabled(false);
+        //loginButton.setEnabled(false);  
         
         Button signupButton = (Button) this.findViewById(R.id.buttonSignUp);
         signupButton.setOnClickListener(this);

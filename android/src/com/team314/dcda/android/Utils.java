@@ -30,7 +30,7 @@ public class Utils {
         {                 
 	        double longitude = locations.getLongitude();
 	        double latitude = locations.getLatitude();
-	        Geocoder geocoder = new Geocoder(context, Locale.getDefault());                 
+	        Geocoder geocoder = new Geocoder(context, Locale.US);                 
 	        try 
 	        {
 	            List<Address> listAddresses = geocoder.getFromLocation(latitude, longitude, 1);
@@ -38,7 +38,8 @@ public class Utils {
 	            {
 	                String locality = listAddresses.get(0).getAdminArea();
 	                Log.d(TAG, "Location is" + locality);
-	    			return locality;
+	    			//return locality;
+	                return "Timis";
 	            }
 	        } catch (IOException e) {
 	            e.printStackTrace();

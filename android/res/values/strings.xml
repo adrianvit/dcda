@@ -17,7 +17,7 @@
     <string name="menu_name">Main Menu</string>
     <string name="desc">A photo showing the list is empty</string>
     <string name="carList_name">Browse Cars</string>
-    <string name="about">This applicatio allows users to interact with our car rental webservice.</string>
+    <string name="about">About the package management system.</string>
     <string name="about_name">About</string>
     <string name="textView_firstname">First Name</string>
     <string name="textView_lastname">Last Name</string>

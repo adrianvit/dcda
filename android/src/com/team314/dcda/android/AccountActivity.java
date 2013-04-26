@@ -121,7 +121,7 @@ public class AccountActivity extends Activity implements OnClickListener {
 				return;
 			}	
 			
-			uri = URIUtils.createURI(HttpUtils.scheme, HttpUtils.central_ip, 8080, HttpUtils.local_users + "/" + userid, null, null);
+			uri = URIUtils.createURI(HttpUtils.scheme, HttpUtils.central_ip, HttpUtils.local_port, HttpUtils.local_users + "/" + userid, null, null);
 			Log.d(TAG, "Uri is " + uri.toString());	
 			HttpGet method = new HttpGet(uri);
 			method.setHeader("Authorization",token);

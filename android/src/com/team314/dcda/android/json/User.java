@@ -22,8 +22,8 @@ public class User {
 	@SerializedName ("pass")
 	private String pass;
 	
-	@SerializedName ("county")
-	private String county;
+	@SerializedName ("role")
+	private String role;
 
 	public String getFirstName() {
 		return firstName;
@@ -65,19 +65,19 @@ public class User {
 		this.pass = pass;
 	}
 
-	public String getCounty() {
-		return county;
-	}
-
-	public void setCounty(String county) {
-		this.county = county;
-	}
-
 	public int getUserid() {
 		return userid;
 	}
 
 	public void setUserid(int userid) {
 		this.userid = userid;
+	}
+
+	public String getRole() {
+		return role;
+	}
+
+	public void setRole(String role) {
+		this.role = role;
 	}
 }

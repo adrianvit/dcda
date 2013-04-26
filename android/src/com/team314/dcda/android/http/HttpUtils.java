@@ -12,11 +12,13 @@ import org.apache.http.params.HttpParams;
 
 public class HttpUtils {
 
-	public static final String central_ip = "79.114.103.226";
+	public static final String central_ip = "192.168.1.102";
 	public static final String central_path = "central/locate";
-	public static final String local_login_path = "local/resources/login";
-	public static final String local_products= "local/resources/products";
-	public static final String local_users= "local/resources/users";
+	public static final int central_port = 18080;
+	public static final String local_login_path = "local/login";
+	public static final String local_products= "local/products";
+	public static final String local_users= "local/users";
+	public static final int local_port = 18080;
 	public static final String scheme  = "http";
 	
 	public static DefaultHttpClient getThreadSafeClient() {

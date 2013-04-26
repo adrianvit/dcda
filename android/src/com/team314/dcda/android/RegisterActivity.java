@@ -107,7 +107,8 @@ public class RegisterActivity extends Activity implements OnClickListener {
 					location = prefs.getString("location", null);
 					if(location != null)
 					{
-						user.setCounty(location);
+						//FIXME not cool
+						user.setRole("user");
 						RestServiceCalls.registerUser(user, this);											
 					}
 					else
