@@ -15,6 +15,7 @@ import javax.ws.rs.core.Context;
 import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.core.Response;
 
+import org.glassfish.jersey.server.ManagedAsync;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -72,6 +73,16 @@ public class ProductsResource {
 		{
 			throw new WebApplicationException(new Throwable("Error creating car!"), 500);
 		}
+		return Response.status(500).build();
+	}
+	
+	@GET
+	@Path("/search")
+	@ManagedAsync
+	public Response searchForProduct(@QueryParam("productName") String productName)
+	{
+		
+		
 		return Response.status(500).build();
 	}
 }
