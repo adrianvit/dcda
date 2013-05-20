@@ -30,7 +30,7 @@ public class Utils {
 	public static final String central_path = "central/locate";
 	public static final String central_path_register = "central/register";
 	public static final String scheme  = "http";
-	public static final int central_port = 18080;
+	public static final int central_port = 8080;
 	private static final Logger LOG = LoggerFactory.getLogger(Utils.class);
 	
 	public static DefaultHttpClient getThreadSafeClient() {

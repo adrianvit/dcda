@@ -8,6 +8,12 @@
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
  	<uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
+    <uses-permission android:name="android.permission.GET_ACCOUNTS" />
+    <uses-permission android:name="android.permission.WAKE_LOCK" />
+    <uses-permission android:name="android.permission.VIBRATE"/>
+	<permission android:name="com.team314.dcda.android.permission.C2D_MESSAGE" android:protectionLevel="signature" />
+    <uses-permission android:name="com.team314.dcda.android.permission.C2D_MESSAGE" />
+    <uses-permission android:name="com.google.android.c2dm.permission.RECEIVE" />
  	
     <application
         android:icon="@drawable/ic_launcher"
@@ -61,6 +67,21 @@
             android:theme="@android:style/Theme.Dialog"
             android:label="Help" >
         </activity>
+        
+        <receiver
+            android:name="com.google.android.gcm.GCMBroadcastReceiver"
+            android:permission="com.google.android.c2dm.permission.SEND" >
+            <intent-filter>
+                <!-- Receives the actual messages. -->
+                <action android:name="com.google.android.c2dm.intent.RECEIVE" />
+                <!-- Receives the registration id. -->
+                <action android:name="com.google.android.c2dm.intent.REGISTRATION" />
+                <category android:name="com.team314.dcda.android" />
+            </intent-filter>
+        </receiver>
+        
+        <service android:name=".GCMIntentService" />
+          
     </application>
 
 </manifest>

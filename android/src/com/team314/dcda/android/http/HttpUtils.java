@@ -12,9 +12,9 @@ import org.apache.http.params.HttpParams;
 
 public class HttpUtils {
 
-	public static final String central_ip = "192.168.1.102";
+	public static final String central_ip = "192.168.0.101";
 	public static final String central_path = "central/locate";
-	public static final int central_port = 18080;
+	public static final int central_port = 8080;
 	public static final String local_login_path = "local/login";
 	public static final String local_products= "local/products";
 	public static final String local_users= "local/users";

@@ -3,10 +3,14 @@ package com.team314.dcda.android;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.os.AsyncTask;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
+
+import com.google.android.gcm.GCMRegistrar;
 
 public class MenuActivity extends Activity implements OnClickListener {
 
@@ -29,8 +33,17 @@ public class MenuActivity extends Activity implements OnClickListener {
         
         Button exitButton = (Button) this.findViewById(R.id.help_button);
         exitButton.setOnClickListener(this);   
-        
-        
+        GCMRegistrar.checkDevice(this);
+		GCMRegistrar.checkManifest(this);
+		final String regId = GCMRegistrar.getRegistrationId(this);
+		Log.d("registrationID", "::" + regId);
+		if (regId.equals("")) {
+			// Automatically registers application on startup.
+			GCMRegistrar.register(this, "472492214191");
+			  
+		}
+		GCMRegistrar.setRegisteredOnServer(MenuActivity.this, true);
+		
 	}
 
 	@Override
