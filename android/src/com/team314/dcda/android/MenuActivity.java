@@ -32,17 +32,10 @@ public class MenuActivity extends Activity implements OnClickListener {
         aboutButton.setOnClickListener(this);
         
         Button exitButton = (Button) this.findViewById(R.id.help_button);
+        
         exitButton.setOnClickListener(this);   
-        GCMRegistrar.checkDevice(this);
-		GCMRegistrar.checkManifest(this);
-		final String regId = GCMRegistrar.getRegistrationId(this);
-		Log.d("registrationID", "::" + regId);
-		if (regId.equals("")) {
-			// Automatically registers application on startup.
-			GCMRegistrar.register(this, "472492214191");
-			  
-		}
-		GCMRegistrar.setRegisteredOnServer(MenuActivity.this, true);
+        
+        Utils.GCMRegistration(this);
 		
 	}
 

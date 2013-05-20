@@ -4,6 +4,9 @@ import java.io.IOException;
 import java.util.List;
 import java.util.Locale;
 
+import com.google.android.gcm.GCMRegistrar;
+import com.team314.dcda.android.http.RestServiceCalls;
+
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -17,6 +20,26 @@ public class Utils {
 
 	public static final String PREFS_NAME = "MyPrefsFile";
 	public static final String TAG = "Utils";
+
+	
+	public static void GCMRegistration(Context context)
+	{
+		
+	        GCMRegistrar.checkDevice(context);
+			GCMRegistrar.checkManifest(context);
+			final String regId = GCMRegistrar.getRegistrationId(context);
+			Log.d("registrationID", "::" + regId);
+			if (regId.equals("")) {
+				// Automatically registers application on startup.
+				GCMRegistrar.register(context, "472492214191");
+				GCMRegistrar.setRegisteredOnServer(context, true);
+			}else
+			{
+				RestServiceCalls.sendRegistrationIdToServer(context, regId);
+			}
+			
+		
+	}
 
 	
 	public static String getAdminLocation(Context context)

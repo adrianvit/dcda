@@ -436,6 +436,60 @@ public class RestServiceCalls {
 		}
 	}
 	
+	public static void sendRegistrationIdToServer(final Context context, String regId)
+	{
+		SharedPreferences prefs = context.getSharedPreferences(Utils.PREFS_NAME, 0);
+		URI uri = null;
+		try {
+			
+			int userid = prefs.getInt("userid", -1);
+			String token = prefs.getString("token", null);
+			if(userid == -1 || token == null)
+			{
+				Utils.createAlertDialog(context, "Error", "An error ocurred!");
+				return;
+			}
+			
+			uri = URIUtils.createURI(HttpUtils.scheme, HttpUtils.central_ip, HttpUtils.local_port, HttpUtils.local_users + "/" + userid + "/addresses", null, null);
+			Log.d(TAG, "Uri is " + uri.toString());	
+			HttpPost method = new HttpPost(uri);
+			method.setHeader("Authorization",token);
+			method.setHeader("Content-Type","application/json");
+			Gson gson = new Gson();
+			String json = gson.toJson(regId);
+			Log.d(TAG, json);
+			method.setEntity(new StringEntity(json));
+			
+			ProgressDialog dialog = new ProgressDialog(context);
+			dialog.setMessage("GCM Registration");
+			
+			MyAsyncTask asyncTask = new MyAsyncTask(dialog, new AsyncTaskCallback(){
+				
+				@Override
+				public void onTaskComplete(HttpResponse response) {
+					
+					int status = response.getStatusLine().getStatusCode();
+					Log.d(TAG, response.getStatusLine().toString());
+					if(status == 200)
+					{
+						Utils.createAlertDialog(context, "OK", "GCM registered");
+					}
+					else 
+					{
+						Utils.createAlertDialog(context, "Error", "Could not register to GCM");
+					}
+					
+				}});
+			//asyncTask.execute(method);
+			Log.d(TAG, "Executed method");
+		} catch (URISyntaxException e1) {
+			Log.e(TAG, "Error creating uri", e1);	
+		} catch (UnsupportedEncodingException e1) {
+			Log.e(TAG, "Error parsing json", e1);	
+		}
+		
+	}
+	
 	public static void createAddress(final Context context, Address adr)
 	{
 		SharedPreferences prefs = context.getSharedPreferences(Utils.PREFS_NAME, 0);
