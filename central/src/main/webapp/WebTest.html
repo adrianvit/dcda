@@ -1,0 +1,51 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+<title>Web Application</title>
+<link rel="stylesheet" href="styles.css" />
+</head>
+
+<body>
+
+<div class="header">
+	<label>Server Name</label>
+	<input type="text" id="searchKey"/>
+	<label>Server address</label>
+	<input type="text" id="address"/>
+	<button id="btnAddNode">New Node</button>
+	<button id="btnDeleteNode">Delete Node</button>
+</div>
+
+
+<div class="leftArea">
+<ul id="nodeList"></ul>
+</div>
+
+<form id="nodeForm">
+	
+<div class="mainArea">
+
+<label>Node:</label>
+<input type="text" id="name" name="name" disabled/>
+
+
+<label>Product:</label>
+<input type="text" id="product" name="product"/>
+
+<button id="btnAddProduct">New Product</button>
+<button id="btnDeleteProduct">Delete Product</button>
+
+
+</div>
+
+<div class="rightArea">
+<ul id="productList"></ul>
+</div>
+
+</form>
+
+<script src="js/jquery-1.7.1.min.js"></script>
+<script src="js/main.js"></script>
+
+</body>
+</html>
