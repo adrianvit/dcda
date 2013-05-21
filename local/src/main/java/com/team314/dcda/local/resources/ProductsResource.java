@@ -14,8 +14,8 @@ import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.core.Response;
+import javax.ws.rs.core.UriInfo;
 
-import org.glassfish.jersey.server.ManagedAsync;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -36,6 +36,8 @@ public class ProductsResource {
 	
 	@EJB
 	private LoggedUserDAO loggedUserDao;
+	
+	
 	
 	@GET
     @Produces({"application/json"})
@@ -71,18 +73,10 @@ public class ProductsResource {
 			}
 		}catch(Exception e)
 		{
-			throw new WebApplicationException(new Throwable("Error creating car!"), 500);
+			throw new WebApplicationException(new Throwable("Error creating product!"), 500);
 		}
 		return Response.status(500).build();
 	}
 	
-	@GET
-	@Path("/search")
-	@ManagedAsync
-	public Response searchForProduct(@QueryParam("productName") String productName)
-	{
-		
-		
-		return Response.status(500).build();
-	}
+	
 }

@@ -40,4 +40,18 @@ public class ProductDAO extends GenericDAO<Product, Integer>{
 		}
 		return temp;
 	}
+	
+	@SuppressWarnings("unchecked")
+	public List<Product> getProductsByKeyword(String keyword)
+	{
+		List<Product> temp = null;
+		try
+		{
+			temp = (List<Product>)em.createQuery("SELECT u FROM Product u WHERE UPPER(u.description) LIKE :keyword ORDER BY u.description")
+					.setParameter("keyword",  "%" + keyword.toUpperCase() + "%").getResultList();
+		}catch(Exception e){
+			temp = null;
+		}
+		return temp;
+	}
 }

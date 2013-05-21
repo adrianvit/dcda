@@ -50,6 +50,15 @@ public class ConnectionBean {
 		if(local_ip != null)
 		{
 			
+			//set jndi local ip
+			try {
+				Context ctx = new InitialContext();
+				ctx.rebind(Utils.local_ip_jndi_name, local_ip.substring(0,local_ip.length()-1));
+				LOG.debug("Bind local ip to "+local_ip);
+			} catch (NamingException e) {
+				LOG.error("Could not bind local ip", e);
+			}
+			
 			//if server already exists in the  central repository, update
 			if(checkRepository(httpclient, getLocalName())==true)
 			{
@@ -170,7 +179,7 @@ public class ConnectionBean {
 		String temp = null;
 		try {
 			Context ctx = new InitialContext();
-			temp = (String) ctx.lookup("LocalName");
+			temp = (String) ctx.lookup(Utils.local_name_jndi_name);
 			LOG.debug("LocalName is {}", temp);
 		} catch (NamingException e) {
 			LOG.error("JNDI error", e);
@@ -195,5 +204,4 @@ public class ConnectionBean {
 			return null;
 		}
 	}
-
 }

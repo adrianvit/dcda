@@ -26,6 +26,8 @@ import com.team314.dcda.local.dao.LoggedUserDAO;
 
 public class Utils {
 
+	public static final String local_ip_jndi_name = "LocalIp";
+	public static final String local_name_jndi_name = "LocalName";
 	public static final String central_ip = "localhost";
 	public static final String central_path = "central/locate";
 	public static final String central_path_register = "central/register";
