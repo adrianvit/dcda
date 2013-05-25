@@ -450,7 +450,7 @@ public class RestServiceCalls {
 				return;
 			}
 			
-			uri = URIUtils.createURI(HttpUtils.scheme, HttpUtils.central_ip, HttpUtils.local_port, HttpUtils.local_users + "/" + userid + "/addresses", null, null);
+			uri = URIUtils.createURI(HttpUtils.scheme, HttpUtils.central_ip, HttpUtils.local_port, HttpUtils.local_notification + "?id=" + userid + "&regId="+regId, null, null);
 			Log.d(TAG, "Uri is " + uri.toString());	
 			HttpPost method = new HttpPost(uri);
 			method.setHeader("Authorization",token);

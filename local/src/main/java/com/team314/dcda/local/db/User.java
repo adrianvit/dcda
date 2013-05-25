@@ -40,7 +40,9 @@ public class User implements Serializable{
 	@Column(name = "role")
 	private String role;
 	
-
+	@Column(name = "regId")
+	private String regId;
+	
 	public Integer getUserId() {
 		return userid;
 	}
@@ -56,7 +58,15 @@ public class User implements Serializable{
 	public void setFirstName(String firstName) {
 		this.firstName = firstName;
 	}
+	
+	public String getRegId() {
+		return regId;
+	}
 
+	public void setRegId(String regId) {
+		this.regId = regId;
+	}
+	
 	public String getLastName() {
 		return lastName;
 	}
