@@ -450,8 +450,9 @@ public class RestServiceCalls {
 				return;
 			}
 			
-			uri = URIUtils.createURI(HttpUtils.scheme, HttpUtils.central_ip, HttpUtils.local_port, HttpUtils.local_notification + "?id=" + userid + "&regId="+regId, null, null);
-			Log.d(TAG, "Uri is " + uri.toString());	
+			uri = URIUtils.createURI(HttpUtils.scheme, HttpUtils.central_ip, HttpUtils.local_port, HttpUtils.local_notification +"?id=" + userid + "&regId="+regId, null, null);
+			Log.d(TAG, "Uri is " + uri.toString());
+			Log.d(TAG,"token is" + token);
 			HttpPost method = new HttpPost(uri);
 			method.setHeader("Authorization",token);
 			method.setHeader("Content-Type","application/json");
@@ -480,13 +481,14 @@ public class RestServiceCalls {
 					}
 					
 				}});
-			//asyncTask.execute(method);
+			asyncTask.execute(method);
 			Log.d(TAG, "Executed method");
 		} catch (URISyntaxException e1) {
 			Log.e(TAG, "Error creating uri", e1);	
 		} catch (UnsupportedEncodingException e1) {
 			Log.e(TAG, "Error parsing json", e1);	
 		}
+		
 		
 	}
 	

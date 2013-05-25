@@ -28,6 +28,8 @@ import com.team314.dcda.local.utils.Utils;
 @Path("/notification")
 public class NotificationResource {
 
+	public static final Logger LOG = LoggerFactory.getLogger(AddressResource.class);
+
 	@EJB
 	private UserDAO userdao;
 	
@@ -41,7 +43,7 @@ public class NotificationResource {
 	}
 	
 	@POST
-	public Response setRegId(@QueryParam("id") Integer id, @PathParam("regId") String regId, @Context HttpHeaders headers)
+	public Response setRegId(@QueryParam("id") Integer id, @QueryParam("regId") String regId, @Context HttpHeaders headers)
 	{
 		try {
 			Boolean valid = Utils.validateToken(id, headers, loggedUserDao, "user");
@@ -49,8 +51,8 @@ public class NotificationResource {
 			if(valid)
 			{
 				User user = this.userdao.find(id);
-				
-				user.setRegId(regId);
+				LOG.debug("reg id:"+regId);
+				user.setGCMRegId(regId);
 				
 				userdao.update(user);
 				
@@ -58,7 +60,7 @@ public class NotificationResource {
 			}
 			else
 			{
-				//LOG.debug("Could not validate token");
+				LOG.debug("Could not validate token");
 			}
 		} catch (UnauthorizedException e1) {
 			// TODO Auto-generated catch block
