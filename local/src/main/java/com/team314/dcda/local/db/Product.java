@@ -16,6 +16,11 @@ import javax.xml.bind.annotation.XmlRootElement;
 @XmlRootElement(name = "product")
 public class Product implements Serializable{
 
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 3738902594788779811L;
+
 	@Id
 	@Basic(optional = false)
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -24,7 +29,6 @@ public class Product implements Serializable{
 	
 	@Column(name = "description")
 	private String description;
-	
 	
 	@Column(name = "category")
 	private int category;

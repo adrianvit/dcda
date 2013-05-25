@@ -89,5 +89,5 @@ public class UsersResource {
 		}
 		return Response.status(500).build();
 	}
-	
+
 }
