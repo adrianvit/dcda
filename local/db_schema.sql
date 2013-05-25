@@ -79,3 +79,20 @@ WITH (
   OIDS=FALSE
 );
 ALTER TABLE local.products OWNER TO postgres;
+
+
+-- Table: peers
+
+-- DROP TABLE local.peers;
+
+CREATE TABLE local.peers
+(
+  peerid bigint NOT NULL,
+  url character varying(100),
+  distance integer NOT NULL,
+  CONSTRAINT pk_product PRIMARY KEY (peerid)
+)
+WITH (
+  OIDS=FALSE
+);
+ALTER TABLE local.products OWNER TO postgres;
