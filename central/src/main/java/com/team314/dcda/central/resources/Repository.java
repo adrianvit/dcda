@@ -1,4 +1,6 @@
 package com.team314.dcda.central.resources;
+import java.util.List;
+
 import javax.ejb.EJB;
 import javax.ejb.Stateless;
 import javax.ws.rs.DELETE;
@@ -24,6 +26,22 @@ public class Repository {
 	
 	@EJB
 	private ServerDAO serverDAO;
+	
+	@GET
+    @Produces({"application/json"})
+	public Response getServers()
+	{
+		List<Server> servers = this.serverDAO.getServers();
+		
+		if(servers.size()==0 || servers==null)
+		{
+			throw new WebApplicationException(new Throwable("Servers not found!"), 404);
+		}
+		else
+		{
+			return Response.status(200).entity(servers).build();
+		}
+	}
 	
 	
 	@POST
