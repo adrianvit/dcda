@@ -6,6 +6,10 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.URI;
 import java.util.List;
+import java.util.concurrent.CompletionService;
+import java.util.concurrent.ExecutorCompletionService;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
 
@@ -37,7 +41,6 @@ import com.sun.jersey.client.non.blocking.config.DefaultNonBlockingClientConfig;
 import com.sun.jersey.client.non.blocking.config.NonBlockingClientConfig;
 import com.team314.dcda.local.dao.LoggedUserDAO;
 import com.team314.dcda.local.db.Peer;
-import com.team314.dcda.local.db.Product;
 
 
 public class Utils {
@@ -183,7 +186,7 @@ public class Utils {
 	}
 	
 	
-	public static List<Product> searchForProductsInPeer(Peer peer, String key, int ttl)
+/*	public static List<URI> searchForProductsInPeer(Peer peer, String key, int ttl)
 	{
 		UriBuilder uriBuilder = UriBuilder.fromUri("/local");
 		//uriBuilder.scheme("http").host(peer.getUrl()).port(8080);
@@ -203,7 +206,11 @@ public class Utils {
 			 Client c = NonBlockingClient.create(cc);
 			 c.setConnectTimeout(1000);
 			 AsyncWebResource awr = c.asyncResource(uri);
-			 Future<List<Product>> responseFuture = awr.accept(MediaType.APPLICATION_JSON).get(new GenericType<List<Product>>(){});
+			 Future<List<URI>> responseFuture = awr.accept(MediaType.APPLICATION_JSON).get(new GenericType<List<URI>>(){});
+			 
+			 CompletionService<List<URI>> taskCompletionService = new ExecutorCompletionService<List<URI>>(c.getExecutorService());
+			 taskCompletionService.submit(awr.accept(MediaType.APPLICATION_JSON).get(new GenericType<List<URI>>(){}));
+			 
 			 return responseFuture.get(2, TimeUnit.SECONDS);		
 		}catch(Exception e)
 		{
@@ -212,7 +219,21 @@ public class Utils {
 		}
 	}
 	
+	public static List<URI> searchForProductsInPeerTask(Peer peer, String key, int ttl)
+	{
+		
+		UriBuilder uriBuilder = UriBuilder.fromUri("/local");
+		uriBuilder.scheme("http").host("localhost").path("/search").queryParam("key", key).queryParam("ttl", Integer.toString(ttl-2)).port(18080);
+		URI uri = uriBuilder.build();
+		ClientConfig cc = new DefaultClientConfig();
+		cc.getFeatures().put(JSONConfiguration.FEATURE_POJO_MAPPING, Boolean.TRUE);
+		Client c = Client.create(cc);
+		WebResource wr = c.resource(uri);
+		List<URI> result = wr.accept(MediaType.APPLICATION_JSON).get(new GenericType<List<URI>>(){});
+		return result;
+	}
+	
 	 public static void main(final String[] args) throws Exception {
 
-	 }
+	 }*/
 }

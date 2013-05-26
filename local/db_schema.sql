@@ -104,7 +104,7 @@ CREATE TABLE local.peers
   peerid bigint NOT NULL,
   url character varying(100),
   distance integer NOT NULL,
-  CONSTRAINT pk_product PRIMARY KEY (peerid)
+  CONSTRAINT pk_peer PRIMARY KEY (peerid)
 )
 WITH (
   OIDS=FALSE
