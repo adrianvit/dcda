@@ -100,7 +100,7 @@ public class SearchResource {
 				for(Product p: products)
 				{
 					UriBuilder uriBuilder = UriBuilder.fromUri("/local/products");
-					uriBuilder.scheme("http").host(local_ip).port(8080).path("/"+p.getProductid());
+					uriBuilder.scheme("http").host(local_ip).port(18080).path("/"+p.getProductid());
 					uris.add(uriBuilder.build());
 				}
 				List<URI> temp = searchForProductInPeers(this.peerdao.getPeerList(), keyword, ttl);
