@@ -13,13 +13,16 @@ import org.apache.http.HttpResponse;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.client.methods.HttpPut;
+import org.apache.http.client.methods.HttpRequestBase;
 import org.apache.http.client.utils.URIUtils;
 import org.apache.http.entity.StringEntity;
+import org.apache.http.impl.client.DefaultHttpClient;
 
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.os.StrictMode;
 import android.util.Log;
 import android.widget.ArrayAdapter;
 
@@ -157,6 +160,100 @@ public class RestServiceCalls {
 			Utils.createAlertDialog(context, "Error", "Could not determine location");
 		}
 
+	}
+	
+	public static Product getProduct(String url)
+	{
+		//SharedPreferences prefs = context.getSharedPreferences(Utils.PREFS_NAME, 0);
+		URI uri = null;
+		try {
+
+			if (android.os.Build.VERSION.SDK_INT > 9) {
+			      StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
+			      StrictMode.setThreadPolicy(policy);
+			    }
+			
+			uri = new URI(url);
+			Log.d(TAG, "Uri is " + uri.toString());	
+			HttpGet get_method = new HttpGet(uri);
+			
+			DefaultHttpClient httpClient = HttpUtils.getThreadSafeClient();
+			HttpRequestBase method = get_method;
+			HttpResponse response = httpClient.execute(method);
+			
+			InputStream input = response.getEntity().getContent();
+			Reader reader = new InputStreamReader(input);	
+			Gson gson = new Gson();
+			Product product = gson.fromJson(reader, new TypeToken<Product>(){}.getType());
+			return product;
+			
+		} catch (Exception e1) {
+			Log.e(TAG, "error",e1);	
+		}
+		return null;
+		
+	}
+	
+	public static ArrayList<Product> searchProducts(final Context context, int start, String filter, String text, final  ArrayAdapter<Product> adapter)
+	{
+		Log.d("search",text);
+		SharedPreferences prefs = context.getSharedPreferences(Utils.PREFS_NAME, 0);
+		URI uri = null;
+		try {
+			String query_params = "start="+start;
+			if(filter != null)
+			{
+				query_params += filter;
+			}
+			
+			
+			uri = URIUtils.createURI(HttpUtils.scheme, HttpUtils.central_ip, HttpUtils.local_port, HttpUtils.local_search, "key="+text+"&ttl=4", null);
+			Log.d(TAG, "Uri is " + uri.toString());	
+			HttpGet get_method = new HttpGet(uri);
+			
+			MyAsyncTask getProductsAsyncTask = new MyAsyncTask(null, new AsyncTaskCallback(){
+				
+				@Override
+				public void onTaskComplete(HttpResponse response) {
+					
+					int status = response.getStatusLine().getStatusCode();
+					Log.d(TAG, response.getStatusLine().toString());
+					if(status == 200)
+					{
+						
+						try {
+				
+							InputStream input = response.getEntity().getContent();
+							Reader reader = new InputStreamReader(input);	
+							Gson gson = new Gson();
+							ArrayList<String> urls = gson.fromJson(reader, new TypeToken<ArrayList<String>>(){}.getType());
+							adapter.clear();
+						    for(String url: urls)
+						    {
+						    	adapter.add(getProduct(url));
+						    }
+						    Log.d(TAG, "Added products");
+						    adapter.notifyDataSetChanged();
+							
+						} catch (IllegalStateException e1) {
+							Log.e(TAG, "Error reading response [get products]", e1);	
+						} catch (IOException e1) {
+							Log.e(TAG, "Error reading response [get products]", e1);	
+						}
+						
+					}
+					else 
+					{
+						Log.d(TAG, "Didn't receive ok response [get products]");
+					}
+					
+				}});
+			getProductsAsyncTask.execute(get_method);
+			Log.d(TAG, "Executed method");
+		} catch (URISyntaxException e1) {
+			Log.e(TAG, "Error creating uri", e1);	
+		}
+		return null;
 	}
 	
 	public static ArrayList<Product> getProducts(final Context context, int start, String filter, final  ArrayAdapter<Product> adapter)
