@@ -1,3 +1,17 @@
+-- Schema: local
+
+-- DROP SCHEMA "local";
+
+CREATE SCHEMA "local"
+  AUTHORIZATION postgres;
+
+-- Schema: central
+
+-- DROP SCHEMA central;
+
+CREATE SCHEMA central
+  AUTHORIZATION postgres;
+
 -- Table: users
 
 -- DROP TABLE local.users;
@@ -96,3 +110,36 @@ WITH (
   OIDS=FALSE
 );
 ALTER TABLE local.products OWNER TO postgres;
+
+
+-- Table: central.emails
+
+-- DROP TABLE central.emails;
+
+CREATE TABLE central.emails
+(
+  id bigserial NOT NULL,
+  email character varying(200) NOT NULL,
+  CONSTRAINT pk_id PRIMARY KEY (id),
+  CONSTRAINT unique_email UNIQUE (email)
+)
+WITH (
+  OIDS=FALSE
+);
+ALTER TABLE central.emails OWNER TO postgres;
+
+
+-- Table: central.servers
+
+-- DROP TABLE central.servers;
+
+CREATE TABLE central.servers
+(
+  "name" character varying(50) NOT NULL,
+  address character varying(200) NOT NULL,
+  CONSTRAINT pk_server_name PRIMARY KEY (name)
+)
+WITH (
+  OIDS=FALSE
+);
+ALTER TABLE central.servers OWNER TO postgres;
