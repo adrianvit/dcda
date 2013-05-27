@@ -67,7 +67,7 @@ public class NotificationResource {
 			return false;
 		}
 			
-		Sender sender = new Sender("APIKEY");
+		Sender sender = new Sender("AIzaSyDqNfVwp-E-DonV9KvSyj3frWkNfMbpKpw");
 		Message msg =  new Message.Builder().addData("Message:", "Your package is at "+Utils.getLocalName()).build();
 		Result result = null;
 		try {

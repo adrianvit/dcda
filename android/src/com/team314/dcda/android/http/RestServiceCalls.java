@@ -185,6 +185,7 @@ public class RestServiceCalls {
 			Reader reader = new InputStreamReader(input);	
 			Gson gson = new Gson();
 			Product product = gson.fromJson(reader, new TypeToken<Product>(){}.getType());
+			product.setUrl(url);
 			return product;
 			
 		} catch (Exception e1) {
@@ -314,6 +315,61 @@ public class RestServiceCalls {
 			Log.e(TAG, "Error creating uri", e1);	
 		}
 		return null;
+	}
+	
+	
+	
+	public static void orderProduct(final Context context,int id, Product product)
+	{
+		SharedPreferences prefs = context.getSharedPreferences(Utils.PREFS_NAME, 0);
+		URI uri = null;
+		try
+		{
+			String query_params = "id=" + id +"&pid=" + product.getProductid();
+			uri = URIUtils.createURI(HttpUtils.scheme, HttpUtils.central_ip, HttpUtils.central_port, HttpUtils.local_login_path, query_params, null);
+			HttpPost post_method = new HttpPost(uri);
+			Log.d(TAG, "Uri is " + uri.toString());	
+			MyAsyncTask loginAsyncTask = new MyAsyncTask(null, new AsyncTaskCallback(){
+
+				@Override
+				public void onTaskComplete(HttpResponse response) {
+					
+					int status = response.getStatusLine().getStatusCode();
+					Log.d(TAG, response.getStatusLine().toString());
+					if(status == 200)
+					{
+						InputStream input;
+						try {
+							input = response.getEntity().getContent();
+							Reader reader = new InputStreamReader(input);	
+							Gson gson = new Gson();
+							LoggedUser loggingResponse = gson.fromJson(reader, LoggedUser.class);
+							//store token 
+							//editor.putString("token", loggingResponse.getToken());								
+							//editor.putInt("userid", loggingResponse.getUserid());
+							//editor.commit();
+							Log.d(TAG, "Got token "+loggingResponse.getToken());	
+							
+							//start main menu intent
+							Intent intent = new Intent(context, MenuActivity.class);
+							context.startActivity(intent);
+							
+						} catch (IllegalStateException e1) {
+							Log.e(TAG, "Error reading response [login]", e1);	
+						} catch (IOException e1) {
+							Log.e(TAG, "Error reading response [login]", e1);	
+						}
+					}
+					
+					
+				}});
+			
+			loginAsyncTask.execute(post_method);
+	        
+		}catch (URISyntaxException e1) {
+			Log.e(TAG, "Error creating uri", e1);	
+		}
+		
 	}
 	
 	public static void registerUser(User user, final Context context)
