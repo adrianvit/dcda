@@ -1,5 +1,5 @@
 // The root URL for the RESTful services
-var rootURL = "http://localhost:8080/cellar/rest/wines";
+var rootURL = "http://localhost:8080/central";
 
 var currentNode;
 
@@ -38,7 +38,7 @@ function findAll() { // needs function in Repository.java
 	console.log('findAll');
 	$.ajax({
 		type: 'GET',
-		url: rootURL + '/locate',
+		url: rootURL + '/rest/locate',
 		dataType: "json", // data type of response
 		success: renderListNodes
 	});
@@ -49,7 +49,7 @@ function findAllProducts(server) { // needs function in Repository.java
 	console.log('findAllProducts');
 	$.ajax({
 		type: 'GET',
-		url: rootURL + '/locate/' + server,
+		url: rootURL + '/rest/locate/' + server,
 		dataType: "json", // data type of response
 		success: renderListProducts
 	});
@@ -70,11 +70,11 @@ function addNode(name,address) {//ok
 	$.ajax({
 		type: 'POST',
 		contentType: 'application/json',
-		url: rootURL + '/locate/' + 'name=' + name + '&' + 'address=' + address,
+		url: rootURL + '/rest/locate?' + 'name=' + name + '&' + 'adr=' + address,
 		dataType: "json",
 		data: formToJSON(),
 		success: function(data, textStatus, jqXHR){
-			alert('Node created successfully');
+			$('#nodeList').append('<li id="'+name+'"><a href="#" data-identity="' + name + '">'+name+'</a></li>');
 		},
 		error: function(jqXHR, textStatus, errorThrown){
 			alert('addNode error: ' + textStatus);
@@ -86,9 +86,9 @@ function deleteNode(name) {//ok
 	console.log('deleteNode');
 	$.ajax({
 		type: 'DELETE',
-		url: rootURL + '/locate/' + name,
+		url: rootURL + '/rest/locate/' + name,
 		success: function(data, textStatus, jqXHR){
-			alert('Node deleted successfully');
+			$('#'+name).closest('li').remove();
 		},
 		error: function(jqXHR, textStatus, errorThrown){
 			alert('deleteNode error');
@@ -98,10 +98,24 @@ function deleteNode(name) {//ok
 
 function addProduct(product) {//ok
 	console.log('addProduct');
+	var adr = '';
+	$.ajax({
+		type: 'GET',
+		url: rootURL + '/rest/locate/' + $('#name').val(),
+		dataType: "json", // data type of response
+		success: function(data, textStatus, jqXHR){
+			adr = data.adr;
+			alert(''+adr);
+		},
+		error: function(jqXHR, textStatus, errorThrown){
+			alert('addProduct error: ' + textStatus);
+		}
+	});
+	
 	$.ajax({
 		type: 'POST',
 		contentType: 'application/json',
-		url: rootURL + '/locate/' + product,
+		url: rootURL + '/rest/locate/' + product,
 		dataType: "json",
 		data: formToJSON(),
 		success: function(data, textStatus, jqXHR){
@@ -117,7 +131,7 @@ function deleteProduct(product) {//ok
 	console.log('deleteNode');
 	$.ajax({
 		type: 'DELETE',
-		url: rootURL + '/locate/' + product,
+		url: rootURL + '/rest/locate/' + product,
 		success: function(data, textStatus, jqXHR){
 			alert('Product deleted successfully');
 		},
@@ -133,7 +147,7 @@ function renderListNodes(data) {
 
 	$('#nodeList a').remove();
 	$.each(list, function(index, node) {
-		$('#nodeList').append('<li><a href="#" data-identity="' + node.name + '">'+node.name+'</a></li>');
+		$('#nodeList').append('<li id="' + node.name + '"><a href="#" data-identity="' + node.name + '">'+node.name+'</a></li>');
 	});
 }
 
