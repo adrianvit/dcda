@@ -7,28 +7,33 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.pm.ActivityInfo;
 import android.os.Bundle;
+import android.text.Editable;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
-import android.view.MenuItem;
 import android.view.View;
+import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.widget.AbsListView;
 import android.widget.AbsListView.OnScrollListener;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
+import android.widget.EditText;
 import android.widget.TextView;
 
 import com.team314.dcda.android.http.RestServiceCalls;
 import com.team314.dcda.android.json.Product;
 
-public class ProductListActivity extends ListActivity implements OnScrollListener, OnItemClickListener {
+public class ProductListActivity extends ListActivity implements OnScrollListener, OnItemClickListener, OnClickListener {
 
 	 private MyAdapter adapter;
 	 private int prevTotalCount = 0;
 	 private String filters;
+	 private EditText searchText;
+	 private Button buttonSearch;
 
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -36,6 +41,12 @@ public class ProductListActivity extends ListActivity implements OnScrollListene
         ArrayList<Product> productList = new ArrayList<Product>();
         
         setContentView(R.layout.list);
+        
+        searchText = (EditText) findViewById(R.id.textSearch);
+        buttonSearch = (Button) findViewById(R.id.buttonSearch);
+        
+        buttonSearch.setOnClickListener(this);
+        
         filters = getIntent().getStringExtra("filters");
         
         adapter = new MyAdapter(this, productList);
@@ -51,13 +62,13 @@ public class ProductListActivity extends ListActivity implements OnScrollListene
     @Override
     public void onScroll(AbsListView view, int firstVisible, int visibleCount, int totalCount) {
 
-		
+		/*
         boolean loadMore = (firstVisible + visibleCount >= totalCount) && totalCount!= prevTotalCount;
-
+        Log.d("list",loadMore+"");
         if(loadMore) {
             totalCount = prevTotalCount;
             RestServiceCalls.getProducts(this, firstVisible + visibleCount, filters, adapter);
-        }
+        }*/
 
     }
 
@@ -109,7 +120,6 @@ public class ProductListActivity extends ListActivity implements OnScrollListene
 	@Override
 	public void onItemClick(AdapterView<?> arg0, View arg1, int arg2, long arg3) {
 		
-
 	}
 
 	@Override
@@ -144,4 +154,11 @@ public class ProductListActivity extends ListActivity implements OnScrollListene
         }
 
     }
+
+	@Override
+	public void onClick(View arg0) {
+		Editable text = searchText.getText();
+		RestServiceCalls.searchProducts(this, 0, filters,text.toString(), adapter);
+		
+	}
 }
