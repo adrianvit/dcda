@@ -60,15 +60,15 @@ public class ConnectionBean {
 			}
 			
 			//if server already exists in the  central repository, update
-			if(checkRepository(httpclient, getLocalName())==true)
+			if(checkRepository(httpclient, Utils.getLocalName())==true)
 			{
 				LOG.debug("Server already exists in repository");
-				put(httpclient, getLocalName(), local_ip.substring(0, local_ip.length()-1));	
+				put(httpclient, Utils.getLocalName(), local_ip.substring(0, local_ip.length()-1));	
 			}
 			else
 			{
 				
-				String temp = "name="+getLocalName()+"&adr="+local_ip.substring(0, local_ip.length()-1);
+				String temp = "name="+Utils.getLocalName()+"&adr="+local_ip.substring(0, local_ip.length()-1);
 				try {
 					uri = URIUtils.createURI(Utils.scheme, Utils.central_ip, Utils.central_port, Utils.central_path, temp, null);
 					LOG.info("URI = {}", uri.toString());
@@ -172,21 +172,6 @@ public class ConnectionBean {
 			throw new RuntimeException("Failed to connect to central server!");
 		}
 		return false;
-	}
-	
-	private String getLocalName()
-	{
-		String temp = null;
-		try {
-			Context ctx = new InitialContext();
-			temp = (String) ctx.lookup(Utils.local_name_jndi_name);
-			LOG.debug("LocalName is {}", temp);
-		} catch (NamingException e) {
-			LOG.error("JNDI error", e);
-		}catch (Exception e) {
-			throw new RuntimeException("Failed to find local name!");
-		}
-		return temp;
 	}
 	
 	private String getIP(HttpClient httpClient, String url)

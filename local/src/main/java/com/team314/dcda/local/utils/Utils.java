@@ -13,6 +13,9 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
 
+import javax.naming.Context;
+import javax.naming.InitialContext;
+import javax.naming.NamingException;
 import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.UriBuilder;
@@ -183,6 +186,21 @@ public class Utils {
 			return false;
 		}
 		return false;
+	}
+	
+	public static String getLocalName()
+	{
+		String temp = null;
+		try {
+			Context ctx = new InitialContext();
+			temp = (String) ctx.lookup(Utils.local_name_jndi_name);
+			LOG.debug("LocalName is {}", temp);
+		} catch (NamingException e) {
+			LOG.error("JNDI error", e);
+		}catch (Exception e) {
+			throw new RuntimeException("Failed to find local name!");
+		}
+		return temp;
 	}
 	
 	

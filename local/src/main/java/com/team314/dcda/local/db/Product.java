@@ -20,6 +20,8 @@ public class Product implements Serializable{
 	 * 
 	 */
 	private static final long serialVersionUID = 3738902594788779811L;
+	
+	public Product(){}
 
 	@Id
 	@Basic(optional = false)
