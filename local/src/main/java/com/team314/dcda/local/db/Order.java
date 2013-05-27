@@ -19,19 +19,46 @@ import javax.xml.bind.annotation.XmlTransient;
 @XmlRootElement(name = "order")
 public class Order implements Serializable{
 
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 8349650087373814184L;
+
 	@Id
 	@Basic(optional = false)
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	@Column(name = "orderid")
 	private Integer orderid;
 	
-	@Column(name = "comment")
-	private String comment;
+	@Column(name = "status")
+	private String status;
+	
+	@Column(name = "productid")
+	private int productid;
+	
+	@Column(name = "host")
+	private String host;
 	
 	@JoinColumn(name = "userid", referencedColumnName = "userid")
 	@ManyToOne
 	private User user;
-	
+
+	public int getProductid() {
+		return productid;
+	}
+
+	public void setProductid(int productid) {
+		this.productid = productid;
+	}
+
+	public String getHost() {
+		return host;
+	}
+
+	public void setHost(String host) {
+		this.host = host;
+	}
+
 	public Integer getOrderid() {
 		return orderid;
 	}
@@ -40,12 +67,12 @@ public class Order implements Serializable{
 		this.orderid = orderid;
 	}
 
-	public String getComment() {
-		return comment;
+	public String getStatus() {
+		return status;
 	}
 
-	public void setComment(String comment) {
-		this.comment = comment;
+	public void setStatus(String status) {
+		this.status = status;
 	}
 
 	@XmlTransient

@@ -53,7 +53,7 @@ public class ProductListActivity extends ListActivity implements OnScrollListene
         setListAdapter(adapter); 
         getListView().setOnScrollListener(this);
         getListView().setOnItemClickListener(this);
-        RestServiceCalls.getProducts(this, 0, filters, adapter);
+       // RestServiceCalls.getProducts(this, 0, filters, adapter);
     }
 
     int old_count = 0;
@@ -119,7 +119,8 @@ public class ProductListActivity extends ListActivity implements OnScrollListene
 
 	@Override
 	public void onItemClick(AdapterView<?> arg0, View arg1, int arg2, long arg3) {
-		
+		Product p=adapter.objects.get(arg2);
+		RestServiceCalls.orderProduct(this,1, p);
 	}
 
 	@Override

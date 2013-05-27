@@ -1,5 +1,7 @@
 package com.team314.dcda.local.resources;
 
+import java.io.IOException;
+
 import javax.ejb.EJB;
 import javax.ejb.Stateless;
 import javax.ws.rs.Consumes;
@@ -17,6 +19,9 @@ import javax.ws.rs.core.Response;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.google.android.gcm.server.Message;
+import com.google.android.gcm.server.Result;
+import com.google.android.gcm.server.Sender;
 import com.team314.dcda.local.dao.LoggedUserDAO;
 import com.team314.dcda.local.dao.UserDAO;
 import com.team314.dcda.local.db.User;
@@ -37,9 +42,46 @@ public class NotificationResource {
 	private LoggedUserDAO loggedUserDao;
 
 	@GET
-	public Response notify(@QueryParam("userIdentification") String id)
+	public Response notify(@QueryParam("id") int id)
 	{
-		return Response.status(200).build();	
+		if(notifyBeanMethod(id))
+		{
+			return Response.status(200).build();				
+		}
+		else
+		{
+			return Response.status(500).build();
+		}
+	}
+	
+	public boolean notifyBeanMethod(int userID)
+	{
+		User user = null;
+		if((user = this.userdao.find(userID))!= null)
+		{
+			if(user.getGCMRegId() == null)
+			{
+				return false;
+			}
+		}else{
+			return false;
+		}
+			
+		Sender sender = new Sender("AIzaSyDqNfVwp-E-DonV9KvSyj3frWkNfMbpKpw");
+		Message msg =  new Message.Builder().addData("Message:", "Your package is at "+Utils.getLocalName()).build();
+		Result result = null;
+		try {
+			result = sender.send(msg, user.getGCMRegId(), 3);
+		} catch (IOException e) {
+			LOG.error("Error sending message to GMC",e);
+		}
+		
+		if(result == null)
+		{
+			LOG.debug("Could not send message after multiple attemps.");
+			return false;
+		}
+		return true;
 	}
 	
 	@POST
@@ -63,10 +105,8 @@ public class NotificationResource {
 				LOG.debug("Could not validate token");
 			}
 		} catch (UnauthorizedException e1) {
-			// TODO Auto-generated catch block
 			e1.printStackTrace();
 		} catch (ForbiddenException e1) {
-			// TODO Auto-generated catch block
 			e1.printStackTrace();
 		}catch(Exception e)
 		{
