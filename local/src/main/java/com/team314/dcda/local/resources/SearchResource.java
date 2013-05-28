@@ -116,7 +116,13 @@ public class SearchResource {
 				{
 					uris.addAll(temp);					
 				}
-				return Response.status(200).entity(uris).build(); 
+				if(uris.size()>1)
+				{
+					return Response.status(200).entity(uris).build(); 					
+				}else
+				{
+					return Response.status(404).build();
+				}
 			}
 			
 		}catch(Exception e)
