@@ -39,6 +39,10 @@ public class Order implements Serializable{
 	@Column(name = "host")
 	private String host;
 	
+	@Column(name = "quantity")
+	private int quantity;
+	
+
 	@JoinColumn(name = "userid", referencedColumnName = "userid")
 	@ManyToOne
 	private User user;
@@ -75,7 +79,7 @@ public class Order implements Serializable{
 		this.status = status;
 	}
 
-	@XmlTransient
+	//@XmlTransient
 	public User getUser() {
 		return user;
 	}
@@ -84,6 +88,14 @@ public class Order implements Serializable{
 		this.user = user;
 	}
 	
+	public int getQuantity() {
+		return quantity;
+	}
+	
+	public void setQuantity(int quantity) {
+		this.quantity = quantity;
+	}
+
 	@Override
     public int hashCode() {
         int hash = 0;

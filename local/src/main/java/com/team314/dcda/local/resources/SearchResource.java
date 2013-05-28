@@ -20,6 +20,7 @@ import javax.ejb.EJB;
 import javax.ejb.Stateless;
 import javax.naming.InitialContext;
 import javax.naming.NamingException;
+import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
@@ -66,7 +67,7 @@ public class SearchResource {
 	
 	@GET
 	@Produces({"application/json"})
-	public Response searchForProduct(@QueryParam("key") String keyword, @QueryParam("ttl") int ttl, @Context UriInfo ui)
+	public Response searchForProduct(@QueryParam("key") String keyword, @QueryParam("ttl") int ttl, @Context UriInfo ui, @Context HttpServletRequest req)
 	{
 		if(ttl-1<0)
 		{
@@ -89,6 +90,8 @@ public class SearchResource {
 			return Response.status(500).build();
 		}
 		
+		String remote_ip = getRequestIp(req);
+		
 		try
 		{
 			List<Product> products = this.productdao.getProductsByKeyword(keyword);
@@ -103,30 +106,33 @@ public class SearchResource {
 					uriBuilder.scheme("http").host(local_ip).port(18080).path("/"+p.getProductid());
 					uris.add(uriBuilder.build());
 				}
-				List<URI> temp = searchForProductInPeers(this.peerdao.getPeerList(), keyword, ttl);
+
+				return Response.status(200).entity(uris).build(); 
+			}
+			else
+			{
+				List<URI> temp = searchForProductInPeers(this.peerdao.getPeerList(), keyword, ttl, remote_ip);
 				if(temp != null)
 				{
 					uris.addAll(temp);					
 				}
 				return Response.status(200).entity(uris).build(); 
 			}
-			else
-			{
-				List<URI> temp = searchForProductInPeers(this.peerdao.getPeerList(), keyword, ttl);
-				if(temp != null)
-				{
-					uris.addAll(temp);					
-				}
-			}
 			
 		}catch(Exception e)
 		{
 			throw new WebApplicationException(new Throwable("Error serching for products"), 500);
 		}
-		return Response.status(500).build();
 	}
 	
-	private List<URI> searchForProductInPeers(List<Peer> peers, String key, int ttl)
+	private String getRequestIp(HttpServletRequest req)
+	{
+		String result = null;
+		result = req.getRemoteHost();
+		return result;
+	}
+	
+	private List<URI> searchForProductInPeers(List<Peer> peers, String key, int ttl, String remote_ip)
 	{
 		List<URI> result = null;
 		ExecutorService executorService = Executors.newCachedThreadPool();
@@ -135,8 +141,11 @@ public class SearchResource {
 		
 		for(Peer p: peers)
 		{
-			futureList.add(completionService.submit(new SearchForProductsInPeerTask(p, key, ttl-1)));
-			LOG.debug("Submitted task to peer" + p.getPeerid());
+			if(p.getUrl()!=remote_ip)
+			{
+				futureList.add(completionService.submit(new SearchForProductsInPeerTask(p, key, ttl-1)));
+				LOG.debug("Submitted task to peer" + p.getPeerid());				
+			}
 		}
 		try {
 			
@@ -180,7 +189,7 @@ class SearchForProductsInPeerTask implements Callable<List<URI>>{
 	@Override
 	public List<URI> call() throws Exception {
 		UriBuilder uriBuilder = UriBuilder.fromUri("/local");
-		uriBuilder.scheme("http").host("localhost").path("/search").queryParam("key", key).queryParam("ttl", Integer.toString(ttl-2)).port(18080);
+		uriBuilder.scheme("http").host(peer.getUrl()).path("/search").queryParam("key", key).queryParam("ttl", Integer.toString(ttl-1)).port(18080);
 		URI uri = uriBuilder.build();
 		ClientConfig cc = new DefaultClientConfig();
 		cc.getFeatures().put(JSONConfiguration.FEATURE_POJO_MAPPING, Boolean.TRUE);

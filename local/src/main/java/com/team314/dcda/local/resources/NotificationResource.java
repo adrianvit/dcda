@@ -4,15 +4,11 @@ import java.io.IOException;
 
 import javax.ejb.EJB;
 import javax.ejb.Stateless;
-import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
-import javax.ws.rs.PathParam;
-import javax.ws.rs.Produces;
-import javax.ws.rs.WebApplicationException;
-import javax.ws.rs.core.Context;
 import javax.ws.rs.QueryParam;
+import javax.ws.rs.core.Context;
 import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.core.Response;
 
@@ -59,7 +55,7 @@ public class NotificationResource {
 		User user = null;
 		if((user = this.userdao.find(userID))!= null)
 		{
-			if(user.getGCMRegId() == null)
+			if(user.getGcmregid() == null)
 			{
 				return false;
 			}
@@ -71,7 +67,7 @@ public class NotificationResource {
 		Message msg =  new Message.Builder().addData("Message:", "Your package is at "+Utils.getLocalName()).build();
 		Result result = null;
 		try {
-			result = sender.send(msg, user.getGCMRegId(), 3);
+			result = sender.send(msg, user.getGcmregid(), 3);
 		} catch (IOException e) {
 			LOG.error("Error sending message to GMC",e);
 		}
@@ -94,7 +90,7 @@ public class NotificationResource {
 			{
 				User user = this.userdao.find(id);
 				LOG.debug("reg id:"+regId);
-				user.setGCMRegId(regId);
+				user.setGcmregid(regId);
 				
 				userdao.update(user);
 				

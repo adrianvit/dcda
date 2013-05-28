@@ -40,8 +40,8 @@ public class User implements Serializable{
 	@Column(name = "role")
 	private String role;
 	
-	@Column(name = "GCMRegId")
-	private String GCMRegId;
+	@Column(name = "gcmregid")
+	private String gcmregid;
 	
 	public Integer getUserId() {
 		return userid;
@@ -59,12 +59,12 @@ public class User implements Serializable{
 		this.firstName = firstName;
 	}
 	
-	public String getGCMRegId() {
-		return GCMRegId;
+	public String getGcmregid() {
+		return gcmregid;
 	}
 
-	public void setGCMRegId(String regId) {
-		this.GCMRegId = regId;
+	public void setGcmregid(String regId) {
+		this.gcmregid = regId;
 	}
 	
 	public String getLastName() {

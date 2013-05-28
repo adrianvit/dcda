@@ -109,7 +109,27 @@ CREATE TABLE local.peers
 WITH (
   OIDS=FALSE
 );
-ALTER TABLE local.products OWNER TO postgres;
+ALTER TABLE local.peers OWNER TO postgres;
+
+
+CREATE TABLE local.orders
+(
+  orderid bigserial NOT NULL,
+  "status" character varying(100),
+  productid integer NOT NULL,
+  host character varying(100),
+  quantity integer NOT NULL,
+  userid bigint NOT NULL,
+  CONSTRAINT pk_order PRIMARY KEY (orderid)
+  CONSTRAINT fk_useridorders FOREIGN KEY (userid)
+      REFERENCES local.users (userid) MATCH SIMPLE
+      ON UPDATE NO ACTION ON DELETE CASCADE
+)
+WITH (
+  OIDS=FALSE
+);
+ALTER TABLE local.orders OWNER TO postgres;
+
 
 
 -- Table: central.emails
