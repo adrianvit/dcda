@@ -150,7 +150,7 @@ public class SearchResource {
 		{
 			if(p.getUrl()!=remote_ip)
 			{
-				futureList.add(completionService.submit(new SearchForProductsInPeerTask(p, key, ttl-1)));
+				futureList.add(completionService.submit(new SearchForProductsInPeerTask(p, key, ttl)));
 				LOG.debug("Submitted task to peer" + p.getPeerid());				
 			}
 		}
