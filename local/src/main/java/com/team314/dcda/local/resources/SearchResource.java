@@ -69,6 +69,7 @@ public class SearchResource {
 	@Produces({"application/json"})
 	public Response searchForProduct(@QueryParam("key") String keyword, @QueryParam("ttl") int ttl, @Context UriInfo ui, @Context HttpServletRequest req)
 	{
+		LOG.debug("Got request with: key="+keyword+" ttl="+ttl);
 		if(ttl-1<0)
 		{
 			return Response.status(500).build(); 
