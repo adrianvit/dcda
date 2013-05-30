@@ -78,18 +78,4 @@ public class GenerateDataResource {
 			}
 		}
 	}
-
-	enum Email {
-		GOOGLE(1), YAHOO(2), LIVE(3);
-
-		private int code;
-
-		Email(int code) {
-			this.code = code;
-		}
-
-		public String toString() {
-			return this.name();
-		}
-	}
 }
