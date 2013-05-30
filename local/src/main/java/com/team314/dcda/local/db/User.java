@@ -5,13 +5,15 @@ import java.io.Serializable;
 import javax.persistence.Basic;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
 import javax.xml.bind.annotation.XmlRootElement;
 
 
 @Entity
-@Table(name = "local.users")
+@Table(name = "local.users_gen")
 @XmlRootElement(name = "user")
 public class User implements Serializable{
 	
@@ -19,6 +21,7 @@ public class User implements Serializable{
 
 	@Id
 	@Basic(optional = false)
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	@Column(name = "userid")
 	private Integer userid;
 
@@ -43,6 +46,17 @@ public class User implements Serializable{
 	@Column(name = "gcmregid")
 	private String gcmregid;
 	
+	@Column(name = "gender")
+	private int gender;
+	
+	public int getGender() {
+		return gender;
+	}
+
+	public void setGender(int gender) {
+		this.gender = gender;
+	}
+
 	public Integer getUserId() {
 		return userid;
 	}

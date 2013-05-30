@@ -35,4 +35,8 @@ public class GenericDAO<T, ID> {
 		em.remove(entity);
 	}
 	
+	public EntityManager getEM()
+	{
+		return this.em;
+	}
 }
