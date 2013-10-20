@@ -196,7 +196,7 @@ class SearchForProductsInPeerTask implements Callable<List<URI>>{
 	@Override
 	public List<URI> call() throws Exception {
 		UriBuilder uriBuilder = UriBuilder.fromUri("/local");
-		uriBuilder.scheme("http").host(peer.getUrl()).path("/search").queryParam("key", key).queryParam("ttl", Integer.toString(ttl-1)).port(18080);
+		uriBuilder.scheme("http").host(peer.getUrl()).path("/search").queryParam("key", key).queryParam("ttl", Integer.toString(ttl)).port(18080);
 		URI uri = uriBuilder.build();
 		ClientConfig cc = new DefaultClientConfig();
 		cc.getFeatures().put(JSONConfiguration.FEATURE_POJO_MAPPING, Boolean.TRUE);
