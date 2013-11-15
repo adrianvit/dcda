@@ -120,7 +120,7 @@ CREATE TABLE local.orders
   host character varying(100),
   quantity integer NOT NULL,
   userid bigint NOT NULL,
-  CONSTRAINT pk_order PRIMARY KEY (orderid)
+  CONSTRAINT pk_order PRIMARY KEY (orderid),
   CONSTRAINT fk_useridorders FOREIGN KEY (userid)
       REFERENCES local.users (userid) MATCH SIMPLE
       ON UPDATE NO ACTION ON DELETE CASCADE
