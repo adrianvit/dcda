@@ -10,50 +10,93 @@
 <script
 	src="http://netdna.bootstrapcdn.com/twitter-bootstrap/2.3.2/js/bootstrap.min.js"></script>
 <script src="http://ajax.aspnetcdn.com/ajax/knockout/knockout-2.2.1.js"></script>
+<script src="products.js"></script>
+<script src="objstorage.js"></script>
+
+
 </head>
 <body>
-<div class="well">
-	<table class="table" >
+  
+<div class="container">
+	
+  	<br><br>
+  	<div class="span5 offset4"><h2>List of Products</h2></div>
+  	<br><br><br><br>
+	<table class="table table-hover" >
 		<thead>
 			<tr>
 				<th>Product ID</th>
 				<th>Description</th>
 				<th>Price</th>
 				<th>Quantity</th>
+				<th>Order</th>
 			</tr>
 		</thead>
-		<tbody data-bind="foreach: products">
+		<tbody data-bind="foreach: pagedRows">
 		<tr>
 			<td data-bind="text: product_id"></td>
 			<td data-bind="text: description"></td>
 			<td data-bind="text: price"></td>
 			<td data-bind="text: quantity"></td>
+			<td><button data-bind="click: $root.addToCart">Add to Cart</button></td>
+			
 		</tr>
 		</tbody>
 	</table>
+	
+<div>	
+<ul class="pager">
+	<li><a href="#" data-bind="click: previousPage, visible: pageIndex() > 0">Previous</a></li>
+	<li><a href="#" data-bind="click: nextPage, visible: pageIndex() < 10">Next</a></li>
+</ul>
+</div>
+
+<div>
+	<button data-bind="click: $root.goToCart">My Shopping Cart</button>
+</div>
 </div>
 
 	<script type="text/javascript">
 
-			function Product(product_id, description, price, quantity) {
-				var self = this;
-				self.product_id = product_id;
-				self.description = description;
-				self.price = price;
-				self.quantity = quantity;
-			}
-			
 			function AppViewModel() {
 				var self = this;
 				
 			    self.products = ko.observableArray([]);
-			    
+			    self.decoy = new Product("11","teeeef", "34", "44");
+    			self.shoppingList = ko.observableArray([self.decoy]);
+    			self.shoppingList.remove(self.decoy);
+				
+				self.addToCart = function(product){
+        			self.shoppingList.push(product);
+        			console.log('product'+ self.shoppingList);
+   					};
+    			self.goToCart = function(){
+					  localStorage.setObj('products',self.shoppingList);
+					  console.log('shopping list' + self.shoppingList);
+					  window.location.replace("http://localhost:18080/webapp/mycart.html");
+    			};
+
+			    self.pageSize = ko.observable(3);
+        		self.pageIndex = ko.observable(0);
+        		self.previousPage = function() {
+            		self.pageIndex(self.pageIndex() - 1);
+        		};
+        		self.nextPage = function() {
+            		self.pageIndex(self.pageIndex() + 1);
+    			};
+
+    			self.pagedRows = ko.dependentObservable(function() {
+       				 	var size = this.pageSize();
+        				var start = this.pageIndex() * size;
+        				return self.products.slice(start, start + size);
+    				}, self);
+    			
 			    $.getJSON("http://localhost:18080/local/products/", function(allData) {
 			        var mappedProducts = $.map(allData, function(item) { return new Product(item.productid, item.description, item.price, item.quantity) });
 			        self.products(mappedProducts);
 			    }); 
-				
-			}
+			};
+			
 			ko.applyBindings(new AppViewModel());
 	</script>
 </body>
