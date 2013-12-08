@@ -52,7 +52,6 @@
 				self.decoy = new Product("11","teeeef", "34", "44");
     			self.shoppingList = ko.observableArray([self.decoy]);
     			self.shoppingList.remove(self.decoy);
-    			self.shoppingList
     			self.remove = function(product){
     				self.shoppingList.remove(product);
     			};
