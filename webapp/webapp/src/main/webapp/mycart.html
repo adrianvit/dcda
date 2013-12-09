@@ -35,12 +35,17 @@
 			<td data-bind="text: product_id"></td>
 			<td data-bind="text: description"></td>
 			<td data-bind="text: price"></td>
-			<td data-bind="text: quantity"></td>
-			<td><button data-bind="click: $root.remove">Remove to Cart</button></td>
+			<td data-bind="value: myquantity"></td>
+			<td><button data-bind="click: $root.remove">Remove from Cart</button></td>
 			
 		</tr>
 		</tbody>
 	</table>
+	
+	<h3 data-bind="visible: totalToPay() > 0">
+        Total: <span data-bind="text: totalToPay().toFixed(2)"></span> RON
+	</h3>
+	<br> <br>
 	<button data-bind="click: $root.goToProducts">Back to shopping</button>
 </div>
 
@@ -49,6 +54,7 @@
 			function MyCartViewModel() {
 				var self = this;
 			
+				self.myquantity = ko.observable(0);
 				self.decoy = new Product("11","teeeef", "34", "44");
     			self.shoppingList = ko.observableArray([self.decoy]);
     			self.shoppingList.remove(self.decoy);
@@ -59,6 +65,12 @@
 					 // localStorage.setObj('products',self.shoppingList);
 					  window.location.replace("http://localhost:18080/webapp/main.html");
     			};
+    			self.totalToPay = ko.computed(function(){
+    		        var total = 0;
+    		        for(var i = 0; i < self.shoppingList().length; i++)
+    		            total += self.shoppingList()[i].price * ;
+    		        return total;
+    		    });
     			self.shoppingList = localStorage.getObj('products');
 			};
 			ko.applyBindings(new MyCartViewModel());
