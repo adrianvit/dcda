@@ -23,6 +23,7 @@ import com.team314.dcda.local.dao.ProductDAO;
 import com.team314.dcda.local.db.Product;
 import com.team314.dcda.local.utils.ForbiddenException;
 import com.team314.dcda.local.utils.UnauthorizedException;
+import com.team314.dcda.local.utils.UserRoles;
 import com.team314.dcda.local.utils.Utils;
 
 
@@ -62,12 +63,12 @@ public class ProductResource {
 	
 	@PUT
 	@Consumes({"application/json"})
-	public Response put(Product product,@PathParam("id") Integer id, @QueryParam("userId") Integer userId,  @Context HttpHeaders headers)
+	public Response put(Product product,@PathParam("id") Integer id,  @Context HttpHeaders headers)
 	{
 		
 		
 		try {
-			Boolean valid = Utils.validateToken(userId, headers, loggedUserDao, "admin");
+			Boolean valid = Utils.validateToken(headers, loggedUserDao, UserRoles.ADMIN.toString());
 			
 			//sanity check
 			if(id != product.getProductid())
@@ -101,10 +102,8 @@ public class ProductResource {
 				LOG.debug("Could not validate token");
 			}
 		} catch (UnauthorizedException e1) {
-			// TODO Auto-generated catch block
 			e1.printStackTrace();
 		} catch (ForbiddenException e1) {
-			// TODO Auto-generated catch block
 			e1.printStackTrace();
 		}catch(Exception e)
 		{
@@ -116,11 +115,11 @@ public class ProductResource {
 	}
 	
 	@DELETE
-	public Response delete(@PathParam("id") Integer id, @QueryParam("userId") Integer userId,  @Context HttpHeaders headers)
+	public Response delete(@PathParam("id") Integer id,  @Context HttpHeaders headers)
 	{
 
 		try {
-			Boolean valid = Utils.validateToken(userId, headers, loggedUserDao, "admin");
+			Boolean valid = Utils.validateToken(headers, loggedUserDao, UserRoles.ADMIN.toString());
 			
 			if(valid)
 			{
@@ -148,10 +147,8 @@ public class ProductResource {
 				LOG.debug("Could not validate token");
 			}
 		} catch (UnauthorizedException e1) {
-			// TODO Auto-generated catch block
 			e1.printStackTrace();
 		} catch (ForbiddenException e1) {
-			// TODO Auto-generated catch block
 			e1.printStackTrace();
 		}catch(Exception e)
 		{

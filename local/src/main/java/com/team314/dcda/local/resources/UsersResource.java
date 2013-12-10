@@ -13,6 +13,8 @@ import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import javax.ws.rs.WebApplicationException;
+import javax.ws.rs.core.Context;
+import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.core.Response;
 
 import org.apache.http.client.ClientProtocolException;
@@ -21,7 +23,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.team314.dcda.local.utils.EmailException;
+import com.team314.dcda.local.utils.UserRoles;
 import com.team314.dcda.local.utils.Utils;
+import com.team314.dcda.local.dao.LoggedUserDAO;
 import com.team314.dcda.local.dao.UserDAO;
 import com.team314.dcda.local.db.User;
 
@@ -33,6 +37,9 @@ public class UsersResource {
 	
 	@EJB
 	private UserDAO userDAO;
+	
+	@EJB
+	private LoggedUserDAO loggedUserDAO;
 	
 	@GET
     @Produces({"application/json"})
@@ -52,7 +59,7 @@ public class UsersResource {
 
 	@POST
 	@Consumes({"application/json"})
-	public Response createUser(User user)
+	public Response createUser(User user,  @Context HttpHeaders headers)
 	{
 		
 		String email = user.getEmail();
@@ -66,8 +73,15 @@ public class UsersResource {
 			String userid = Utils.checkRegistrationEmail(uri);
 			if(userid != null)
 			{
+				Boolean valid = Utils.validateToken(headers, loggedUserDAO, UserRoles.ADMIN.toString());
 				userid = userid.substring(0, userid.length()-1);
 				user.setUserId(Integer.parseInt(userid));
+				user.setPass(Utils.hashPassword(user.getPass()));
+				//if the token is invalid for the admin role, only create users with role user
+				if(!valid)
+				{
+					user.setRole(UserRoles.USER.toString());
+				}
 				this.userDAO.create(user);
 				return Response.status(200).build();
 			}

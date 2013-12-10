@@ -5,20 +5,11 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.URI;
-import java.util.List;
-import java.util.concurrent.CompletionService;
-import java.util.concurrent.ExecutorCompletionService;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.concurrent.Future;
-import java.util.concurrent.TimeUnit;
 
 import javax.naming.Context;
 import javax.naming.InitialContext;
 import javax.naming.NamingException;
 import javax.ws.rs.core.HttpHeaders;
-import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.UriBuilder;
 
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
@@ -29,21 +20,12 @@ import org.apache.http.client.methods.HttpPost;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.impl.conn.tsccm.ThreadSafeClientConnManager;
 import org.apache.http.params.HttpParams;
+import org.mindrot.jbcrypt.BCrypt;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.sun.jersey.api.client.AsyncWebResource;
-import com.sun.jersey.api.client.Client;
-import com.sun.jersey.api.client.GenericType;
-import com.sun.jersey.api.client.WebResource;
-import com.sun.jersey.api.client.config.ClientConfig;
-import com.sun.jersey.api.client.config.DefaultClientConfig;
-import com.sun.jersey.api.json.JSONConfiguration;
-import com.sun.jersey.client.non.blocking.NonBlockingClient;
-import com.sun.jersey.client.non.blocking.config.DefaultNonBlockingClientConfig;
-import com.sun.jersey.client.non.blocking.config.NonBlockingClientConfig;
 import com.team314.dcda.local.dao.LoggedUserDAO;
-import com.team314.dcda.local.db.Peer;
+import com.team314.dcda.local.db.LoggedUser;
 
 
 public class Utils {
@@ -153,7 +135,7 @@ public class Utils {
 	}
 	
 	
-	public static boolean validateToken(int id, HttpHeaders headers, LoggedUserDAO loggedUserDao, String role) throws UnauthorizedException, ForbiddenException
+	public static boolean validateToken(HttpHeaders headers, LoggedUserDAO loggedUserDao, String role) throws UnauthorizedException, ForbiddenException
 	{
 		String token = null;
 		try
@@ -169,7 +151,8 @@ public class Utils {
 		{
 			String valid = null;
 			try {
-				valid = loggedUserDao.validateToken(id, token, role);
+				LoggedUser loggedUser = loggedUserDao.getUserIdByToken(token);
+				valid = loggedUserDao.validateToken(loggedUser, token, role);
 			} catch (UnauthorizedException e) {
 				throw e;
 			} catch (ForbiddenException e) {
@@ -201,6 +184,16 @@ public class Utils {
 			throw new RuntimeException("Failed to find local name!");
 		}
 		return temp;
+	}
+	
+	public static String hashPassword(String originalPassword){
+		
+		return BCrypt.hashpw(originalPassword, BCrypt.gensalt(12));
+	}
+	
+	public static boolean checkPassword(String password, String hashed){
+		
+		return BCrypt.checkpw(password, hashed);
 	}
 	
 	
