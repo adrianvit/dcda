@@ -61,7 +61,7 @@ public class Repository {
 	}
 	
 	
-	@Path("/{name}")
+	@Path("/server/{name}")
 	@PUT
 	public Response updateServer(@PathParam("name") String name, @QueryParam("adr") String adr)
 	{
@@ -85,7 +85,7 @@ public class Repository {
 		}
 	}
 	
-	@Path("/{name}")
+	@Path("/server/{name}")
 	@DELETE
 	public Response removeServer(@PathParam ("name") String name)
 	{
@@ -108,7 +108,7 @@ public class Repository {
 		}
 	}
 	
-	@Path("/{name}")
+	@Path("/server/{name}")
 	@GET
 	@Produces(MediaType.TEXT_PLAIN)
 	public Response getServer(@PathParam ("name") String name)
