@@ -68,7 +68,7 @@
     			self.totalToPay = ko.computed(function(){
     		        var total = 0;
     		        for(var i = 0; i < self.shoppingList().length; i++)
-    		            total += self.shoppingList()[i].price * ;
+    		            total += self.shoppingList()[i].price;
     		        return total;
     		    });
     			self.shoppingList = localStorage.getObj('products');
