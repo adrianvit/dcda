@@ -26,14 +26,14 @@
 	
 	<div>
 	<form class="form-search">
-	<input  type="text" class="input-medium search-query" data-bind="value: searchName"></input>
-	<button class="btn btn btn-info" type="submit" data-bind="click: $root.searchProduct">Search product</button>
-	<button class="btn btn-success" type="submit" style="float: right;" data-bind="click: $root.goToCart">My Shopping Cart</button>
+		<input  type="text" class="input-medium search-query" data-bind="value: searchName"></input>
+		<button class="btn btn btn-info" type="submit" data-bind="click: $root.searchProduct">Search product</button>
+		<button class="btn btn-success" type="submit" style="float: right;" data-bind="click: $root.goToCart">My Shopping Cart</button>
 	</form>
 	</div>
 	
   	<div>
-	<table  width="100" class="table table-hover">
+	<table class="table table-hover table-condensed">
 		<thead>
 			<tr>
 				<th  width='15%'>Product ID</th>
@@ -50,7 +50,6 @@
 			<td data-bind="text: price"></td>
 			<td data-bind="text: quantity"></td>
 			<td><button class="btn" data-bind="click: $root.addToCart">Add to Cart</button></td>
-			
 		</tr>
 		</tbody>
 	</table>
@@ -61,42 +60,22 @@
 	<li><a href="#" data-bind="click: nextPage, visible: pageIndex() < 10">Next</a></li>
 </ul>
 </div>
-
-<br><br>
 <div>
-<table class="table table-hover" data-bind="visible: $root.searchProducts().length > 0">
-		<thead>
-			<tr>
-				<th>Product ID</th>
-				<th>Description</th>
-				<th>Price</th>
-				<th>Quantity</th>
-				<th>Order</th>
-			</tr>
-		</thead>
-		<tbody data-bind="foreach: searchProducts">
-		<tr>
-			<td data-bind="text: product_id"></td>
-			<td data-bind="text: description"></td>
-			<td data-bind="text: price"></td>
-			<td data-bind="text: quantity"></td>
-			<td><button data-bind="click: $root.addToCart">Add to Cart</button></td>
-		</tr>
-		</tbody>
-	</table>
+		<button class="btn btn-info" type="submit" data-bind="visible: $root.flag, click: $root.backToProducts"><i class="icon-arrow-left"></i> Local products</button>
 </div>
 </div>
 	<script type="text/javascript">
 
-			function AppViewModel(searchName) {
+			function AppViewModel() {
 				var self = this;
 				
-				self.searchName = searchName;
+				self.searchName = ko.observable();
 			    self.products = ko.observableArray([]);
 			    self.searchProducts = ko.observableArray([]);
 			    self.decoy = new Product("11","teeeef", "34", "44");
     			self.shoppingList = ko.observableArray([self.decoy]);
     			self.shoppingList.remove(self.decoy);
+				self.flag = ko.observable(false);
 				
 				self.addToCart = function(product){
         			self.shoppingList.push(product);
@@ -112,6 +91,14 @@
 			        var mappedProducts = $.map(allData, function(item) { return new Product(item.productid, item.description, item.price, item.quantity) });
 			        self.searchProducts(mappedProducts);
 			    }); 
+			    self.flag(true);
+				};
+				self.backToProducts = function(){
+				 	$.getJSON("http://localhost:18080/local/products/", function(allData) {
+			        var mappedProducts = $.map(allData, function(item) { return new Product(item.productid, item.description, item.price, item.quantity) });
+			        self.products(mappedProducts);
+			    });
+			    self.flag(false); 
 				};
 			    self.pageSize = ko.observable(3);
         		self.pageIndex = ko.observable(0);
