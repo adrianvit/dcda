@@ -84,7 +84,7 @@ public class NotificationResource {
 	public Response setRegId(@QueryParam("id") Integer id, @QueryParam("regId") String regId, @Context HttpHeaders headers)
 	{
 		try {
-			Boolean valid = Utils.validateToken(id, headers, loggedUserDao, "user");
+			Boolean valid = Utils.validateToken(headers, loggedUserDao, "user");
 			
 			if(valid)
 			{

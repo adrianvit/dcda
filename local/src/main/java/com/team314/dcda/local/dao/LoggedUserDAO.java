@@ -21,9 +21,8 @@ public class LoggedUserDAO extends GenericDAO<LoggedUser, Integer>{
 	}
 
 	
-	public String validateToken(int userid, String token) throws UnauthorizedException, ForbiddenException
+	public String validateToken(LoggedUser loggedUser, String token) throws UnauthorizedException, ForbiddenException
 	{
-		LoggedUser loggedUser = em.find(LoggedUser.class, userid);
 		if(loggedUser == null)
 		{
 			throw new UnauthorizedException();
@@ -58,9 +57,8 @@ public class LoggedUserDAO extends GenericDAO<LoggedUser, Integer>{
 		
 	} 
 	
-	public String validateToken(int userid, String token, String role) throws UnauthorizedException, ForbiddenException
+	public String validateToken(LoggedUser loggedUser, String token, String role) throws UnauthorizedException, ForbiddenException
 	{
-		LoggedUser loggedUser = em.find(LoggedUser.class, userid);
 		if(loggedUser == null)
 		{
 			throw new UnauthorizedException();
@@ -72,10 +70,22 @@ public class LoggedUserDAO extends GenericDAO<LoggedUser, Integer>{
 				throw new UnauthorizedException();
 			}
 			
-			return validateToken(userid, token);
+			return validateToken(loggedUser, token);
 		}
 		
 	} 
+	
+	public LoggedUser getUserIdByToken(String token)
+	{
+		LoggedUser temp = null;
+		try
+		{
+			temp = (LoggedUser)em.createQuery("Select a FROM LoggedUser a WHERE a.token = :token").setParameter("token", token).getSingleResult();
+		}catch(Exception e){
+			temp = null;
+		}
+		return temp;
+	}
 	
 	private boolean tokenNotExpired(Timestamp timestamp)
 	{

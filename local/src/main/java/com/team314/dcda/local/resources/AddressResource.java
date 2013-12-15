@@ -24,6 +24,7 @@ import com.team314.dcda.local.db.Address;
 import com.team314.dcda.local.db.User;
 import com.team314.dcda.local.utils.ForbiddenException;
 import com.team314.dcda.local.utils.UnauthorizedException;
+import com.team314.dcda.local.utils.UserRoles;
 import com.team314.dcda.local.utils.Utils;
 
 @Path("/users/{id}/addresses/{address_id}")
@@ -46,7 +47,7 @@ public class AddressResource {
 	public Response get(@PathParam("id") Integer id, @PathParam("address_id") Integer address_id, @Context HttpHeaders headers)
 	{
 		try {
-			Boolean valid = Utils.validateToken(id, headers, loggedUserDao, "user");
+			Boolean valid = Utils.validateToken(headers, loggedUserDao, UserRoles.USER.toString());
 			
 			if(valid)
 			{
@@ -85,7 +86,7 @@ public class AddressResource {
 	{
 		
 		try {
-			Boolean valid = Utils.validateToken(id, headers, loggedUserDao, "user");
+			Boolean valid = Utils.validateToken(headers, loggedUserDao, "user");
 			
 			if(valid)
 			{
@@ -134,7 +135,7 @@ public class AddressResource {
 	public Response delete(@PathParam("id") int id, @PathParam("address_id") Integer address_id, @Context HttpHeaders headers)
 	{
 		try {
-			Boolean valid = Utils.validateToken(id, headers, loggedUserDao, "user");
+			Boolean valid = Utils.validateToken(headers, loggedUserDao, "user");
 			
 			if(valid)
 			{
@@ -162,10 +163,8 @@ public class AddressResource {
 				LOG.debug("Could not validate token");
 			}
 		} catch (UnauthorizedException e1) {
-			// TODO Auto-generated catch block
 			e1.printStackTrace();
 		} catch (ForbiddenException e1) {
-			// TODO Auto-generated catch block
 			e1.printStackTrace();
 		}catch(Exception e)
 		{

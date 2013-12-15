@@ -33,6 +33,7 @@ import com.sun.jersey.api.client.config.DefaultClientConfig;
 import com.sun.jersey.api.json.JSONConfiguration;
 import com.team314.dcda.local.utils.ForbiddenException;
 import com.team314.dcda.local.utils.UnauthorizedException;
+import com.team314.dcda.local.utils.UserRoles;
 import com.team314.dcda.local.utils.Utils;
 import com.team314.dcda.local.dao.LoggedUserDAO;
 import com.team314.dcda.local.dao.OrderDAO;
@@ -68,7 +69,7 @@ public class UserResource {
 	public Response get(@PathParam("id") Integer id, @Context HttpHeaders headers)
 	{
 		try {
-			Boolean valid = Utils.validateToken(id, headers, loggedUserDao, "user");
+			Boolean valid = Utils.validateToken(headers, loggedUserDao, UserRoles.USER.toString());
 			
 			if(valid)
 			{
@@ -106,7 +107,7 @@ public class UserResource {
 		
 		
 		try {
-			Boolean valid = Utils.validateToken(id, headers, loggedUserDao, "user");
+			Boolean valid = Utils.validateToken(headers, loggedUserDao, UserRoles.USER.toString());
 			
 			//sanity check
 			if(id != user.getUserId())
@@ -140,10 +141,8 @@ public class UserResource {
 				LOG.debug("Could not validate token");
 			}
 		} catch (UnauthorizedException e1) {
-			// TODO Auto-generated catch block
 			e1.printStackTrace();
 		} catch (ForbiddenException e1) {
-			// TODO Auto-generated catch block
 			e1.printStackTrace();
 		}catch(Exception e)
 		{
@@ -159,7 +158,7 @@ public class UserResource {
 	{
 
 		try {
-			Boolean valid = Utils.validateToken(id, headers, loggedUserDao, "user");
+			Boolean valid = Utils.validateToken(headers, loggedUserDao, UserRoles.USER.toString());
 			
 			if(valid)
 			{
@@ -187,10 +186,8 @@ public class UserResource {
 				LOG.debug("Could not validate token");
 			}
 		} catch (UnauthorizedException e1) {
-			// TODO Auto-generated catch block
 			e1.printStackTrace();
 		} catch (ForbiddenException e1) {
-			// TODO Auto-generated catch block
 			e1.printStackTrace();
 		}catch(Exception e)
 		{
@@ -209,7 +206,7 @@ public class UserResource {
 	{
 		
 		try {
-			Boolean valid = Utils.validateToken(id, headers, loggedUserDao, "user");
+			Boolean valid = Utils.validateToken(headers, loggedUserDao, UserRoles.USER.toString());
 			
 			if(valid)
 			{

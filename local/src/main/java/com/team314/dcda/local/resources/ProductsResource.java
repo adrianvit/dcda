@@ -22,6 +22,7 @@ import org.slf4j.LoggerFactory;
 import com.team314.dcda.local.dao.LoggedUserDAO;
 import com.team314.dcda.local.dao.ProductDAO;
 import com.team314.dcda.local.db.Product;
+import com.team314.dcda.local.utils.UserRoles;
 import com.team314.dcda.local.utils.Utils;
 
 
@@ -57,11 +58,11 @@ public class ProductsResource {
 	
 	@POST
 	@Consumes({"application/json"})
-	public Response createProduct(Product product, @QueryParam("userId") Integer userId, @Context HttpHeaders headers)
+	public Response createProduct(Product product, @Context HttpHeaders headers)
 	{
 		try
 		{
-			Boolean valid = Utils.validateToken(userId, headers, loggedUserDao, "admin");
+			Boolean valid = Utils.validateToken(headers, loggedUserDao, UserRoles.ADMIN.toString());
 			
 			if(valid)
 			{
