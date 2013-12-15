@@ -20,16 +20,27 @@
 <div class="container">
 	
   	<br><br>
-  	<div class="span5 offset4"><h2>List of Products</h2></div>
-  	<br><br><br><br>
-	<table class="table table-hover" >
+  	<div class="page-header">
+ 		 <h1>List of Products</h1>
+	</div>
+	
+	<div>
+	<form class="form-search">
+	<input  type="text" class="input-medium search-query" data-bind="value: searchName"></input>
+	<button class="btn btn btn-info" type="submit" data-bind="click: $root.searchProduct">Search product</button>
+	<button class="btn btn-success" type="submit" style="float: right;" data-bind="click: $root.goToCart">My Shopping Cart</button>
+	</form>
+	</div>
+	
+  	<div>
+	<table  width="100" class="table table-hover">
 		<thead>
 			<tr>
-				<th>Product ID</th>
-				<th>Description</th>
-				<th>Price</th>
-				<th>Quantity</th>
-				<th>Order</th>
+				<th  width='15%'>Product ID</th>
+				<th  width='25%'>Description</th>
+				<th  width='15%'>Price</th>
+				<th  width='15%'>Quantity</th>
+				<th  width='25%'>Order</th>
 			</tr>
 		</thead>
 		<tbody data-bind="foreach: pagedRows">
@@ -38,12 +49,12 @@
 			<td data-bind="text: description"></td>
 			<td data-bind="text: price"></td>
 			<td data-bind="text: quantity"></td>
-			<td><button data-bind="click: $root.addToCart">Add to Cart</button></td>
+			<td><button class="btn" data-bind="click: $root.addToCart">Add to Cart</button></td>
 			
 		</tr>
 		</tbody>
 	</table>
-	
+	</div>
 <div>	
 <ul class="pager">
 	<li><a href="#" data-bind="click: previousPage, visible: pageIndex() > 0">Previous</a></li>
@@ -51,14 +62,7 @@
 </ul>
 </div>
 
-<div>
-	<button data-bind="click: $root.goToCart">My Shopping Cart</button>
-</div>
 <br><br>
-<div>
-	<input data-bind="value: searchName"></input>
-	<button data-bind="click: $root.searchProduct">Search product</button>
-</div>
 <div>
 <table class="table table-hover" data-bind="visible: $root.searchProducts().length > 0">
 		<thead>
