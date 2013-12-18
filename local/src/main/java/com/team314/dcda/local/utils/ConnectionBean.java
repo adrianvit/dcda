@@ -108,7 +108,7 @@ public class ConnectionBean {
 	{
 		URI uri = null;
 		try {
-			uri = URIUtils.createURI(Utils.scheme, Utils.central_ip, Utils.central_port, Utils.central_path+"/"+localName, "adr="+ip, null);
+			uri = URIUtils.createURI(Utils.scheme, Utils.central_ip, Utils.central_port, Utils.central_path+"/server/"+localName, "adr="+ip, null);
 			LOG.info("URI = {}", uri.toString());
 			LOG.info("URI = {}", uri.toURL());
 		} catch (URISyntaxException e1) {
@@ -139,7 +139,7 @@ public class ConnectionBean {
 	{
 		URI uri = null;
 		try {
-			uri = URIUtils.createURI(Utils.scheme, Utils.central_ip, Utils.central_port, Utils.central_path+"/"+localName, null, null);
+			uri = URIUtils.createURI(Utils.scheme, Utils.central_ip, Utils.central_port, Utils.central_path+"/server/"+localName, null, null);
 			LOG.info("URI = {}", uri.toString());
 			LOG.info("URI = {}", uri.toURL());
 		} catch (URISyntaxException e1) {

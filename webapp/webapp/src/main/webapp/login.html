@@ -44,7 +44,6 @@
 											name="username" placeholder="" class="input-xlarge">
 									</div>
 								</div>
-
 								<div class="control-group">
 									<!-- Password-->
 									<label class="control-label" for="password">Password</label>
@@ -54,8 +53,6 @@
 											class="input-xlarge">
 									</div>
 								</div>
-
-
 								<div class="control-group">
 									<!-- Button -->
 									<div class="controls">
@@ -67,14 +64,26 @@
 					</div>
 					<div class="tab-pane fade" id="create">
 						<form id="tab">
-							<label>Username</label> <input type="text" value=""
-								class="input-xlarge"> <label>First Name</label> <input
-								type="text" value="" class="input-xlarge"> <label>Last
-								Name</label> <input type="text" value="" class="input-xlarge"> <label>Email</label>
-							<input type="text" value="" class="input-xlarge"> <label>Address</label>
-							<textarea value="Smith" rows="3" class="input-xlarge"></textarea>
+							<label>First Name</label> <input type="text"
+								data-bind="value: firstName" value="" class="input-xlarge">
+							<label>Last Name</label> <input type="text"
+								data-bind="value: lastName" value="" class="input-xlarge">
+							<label>Email</label> <input type="text" data-bind="value: email"
+								value="" class="input-xlarge"> <label>Password</label> <input
+								type="password" data-bind="value: password" value=""
+								class="input-xlarge"> <label>Address</label>
+							<textarea value="Smith" rows="3" data-bind="value: address"
+								class="input-xlarge"></textarea>
+							<label>Phone</label> <input type="text" data-bind="value: phone"
+								value="" class="input-xlarge">
 							<div>
-								<button class="btn btn-primary">Create Account</button>
+								<button class="btn btn-primary" data-bind="click: register">Create
+									Account</button>
+							</div>
+							<div class="alert alert-error" id="emailAlreadyRegistered">
+								<span>
+									<p>The email is already registered!</p>
+								</span>
 							</div>
 						</form>
 					</div>
@@ -83,27 +92,79 @@
 		</div>
 		<script type="text/javascript">
 			var self = this;
+			//init
+			$('#emailAlreadyRegistered').hide();
 
 			function AppViewModel() {
 				this.username = ko.observable("qwerty@qwerty.com");
 				this.password = ko.observable("");
-				//this.username = "qwerty@qwerty.com";
-				//this.password = "";
+				this.firstName = ko.observable("First Name");
+				this.lastName = ko.observable("Last Name");
+				this.email = ko.observable("example@mail.com");
+				this.address = ko.observable("Address");
+				this.phone = ko.observable("0123812312");
 
 				this.login = function() {
 					console.log(this.username());
 					console.log(this.password());
+					$
+							.ajax({
+								type : "POST",
+								url : "http://localhost:18080/local/login"
+										+ "?" + "email=" + this.username()
+										+ "&password=" + this.password(),
+								data : "",
+								success : function(data, textStatus, jqXHR) {
+									console.log(data);
+									console.log(data.token);
+									console.log(jqXHR.status);
+									if (jqXHR.status = 200) {
+										document.cookie = "auth=" + data.token
+												+ "; path=/";
+										document.cookie = "role=" + data.role
+												+ "; path=/";
+									}
+									window.location
+											.replace("http://localhost:18080/webapp/main.html");
+								},
+								dataType : "json",
+								contentType : "application/json; charset=utf-8"
+							});
+				}
+
+				this.register = function() {
+					$('#emailAlreadyRegistered').hide();
+					console.log(this.firstName());
+					console.log(this.lastName());
+					console.log(this.email());
+					console.log(this.address());
 					$.ajax({
-						type : "POST",
-						url : "http://localhost:18080/local/login" + "?"
-								+ "email=" + this.username() + "&password=" + this.password(),
-						data : "",
-						success : function(data, textStatus, jqXHR) {
-							console.log(data);
-							console.log(data.token);
-							window.location.replace("http://localhost:18080/webapp/main.html");
-						},
-						dataType : "json"
+								type : "POST",
+								url : "http://localhost:18080/local/users",
+								data : JSON.stringify({
+									"firstName" : this.firstName(),
+									"lastName" : this.lastName(),
+									"pass" : this.password(),
+									"phone" : this.phone(),
+									"email" : this.email(),
+									"role" : "USER",
+									"userId" : "0"
+								}),
+								contentType : "application/json; charset=utf-8"
+							}
+					).done(function(data, textStatus, jqXHR) {
+						console.log(jqXHR.status);
+						if (jqXHR.status == 200) {
+							console.log("User created ! Storing address...");
+							//TODO redirect to login tab
+							location.hash = "#login";
+						}
+					}).fail(function(data, textStatus, jqXHR) {
+						console.log(data.status);
+						if (data.status == 409) {
+							console.log("email already registered");
+							$('#emailAlreadyRegistered').show();
+						}
 					});
 				}
 			}

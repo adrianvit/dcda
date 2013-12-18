@@ -33,8 +33,8 @@ public class Utils {
 	public static final String local_ip_jndi_name = "LocalIp";
 	public static final String local_name_jndi_name = "LocalName";
 	public static final String central_ip = "localhost";
-	public static final String central_path = "central/rest/locate";
-	public static final String central_path_register = "central/rest/register";
+	public static final String central_path = "central/locate";
+	public static final String central_path_register = "central/register";
 	public static final String scheme  = "http";
 	public static final int central_port = 18080;
 	private static final Logger LOG = LoggerFactory.getLogger(Utils.class);
@@ -196,55 +196,8 @@ public class Utils {
 		return BCrypt.checkpw(password, hashed);
 	}
 	
-	
-/*	public static List<URI> searchForProductsInPeer(Peer peer, String key, int ttl)
-	{
-		UriBuilder uriBuilder = UriBuilder.fromUri("/local");
-		//uriBuilder.scheme("http").host(peer.getUrl()).port(8080);
-		uriBuilder.scheme("http").host("localhost").path("/search").queryParam("key", key).queryParam("ttl", Integer.toString(ttl-2)).port(18080);
-		URI uri = uriBuilder.build();
-		try
-		{
-			 ClientConfig cc2 = new DefaultClientConfig();
-			 cc2.getFeatures().put(JSONConfiguration.FEATURE_POJO_MAPPING, Boolean.TRUE);
-			 Client c2 = Client.create(cc2);
-			 WebResource wr = c2.resource(uri);
-			 String temp= wr.accept(MediaType.APPLICATION_JSON).get(String.class);
-			 
-			 ClientConfig cc = new DefaultNonBlockingClientConfig();
-			 cc.getProperties().put(NonBlockingClientConfig.PROPERTY_THREADPOOL_SIZE, 10);
-			 cc.getFeatures().put(JSONConfiguration.FEATURE_POJO_MAPPING, Boolean.TRUE);
-			 Client c = NonBlockingClient.create(cc);
-			 c.setConnectTimeout(1000);
-			 AsyncWebResource awr = c.asyncResource(uri);
-			 Future<List<URI>> responseFuture = awr.accept(MediaType.APPLICATION_JSON).get(new GenericType<List<URI>>(){});
-			 
-			 CompletionService<List<URI>> taskCompletionService = new ExecutorCompletionService<List<URI>>(c.getExecutorService());
-			 taskCompletionService.submit(awr.accept(MediaType.APPLICATION_JSON).get(new GenericType<List<URI>>(){}));
-			 
-			 return responseFuture.get(2, TimeUnit.SECONDS);		
-		}catch(Exception e)
-		{
-			LOG.error("Error searching for products", e);
-			return null;
-		}
-	}
-	
-	public static List<URI> searchForProductsInPeerTask(Peer peer, String key, int ttl)
-	{
+	public static void main(String[] args){
 		
-		UriBuilder uriBuilder = UriBuilder.fromUri("/local");
-		uriBuilder.scheme("http").host("localhost").path("/search").queryParam("key", key).queryParam("ttl", Integer.toString(ttl-2)).port(18080);
-		URI uri = uriBuilder.build();
-		ClientConfig cc = new DefaultClientConfig();
-		cc.getFeatures().put(JSONConfiguration.FEATURE_POJO_MAPPING, Boolean.TRUE);
-		Client c = Client.create(cc);
-		WebResource wr = c.resource(uri);
-		List<URI> result = wr.accept(MediaType.APPLICATION_JSON).get(new GenericType<List<URI>>(){});
-		return result;
+		System.out.println(Utils.hashPassword("asd123"));
 	}
-	
-	 public static void main(final String[] args) throws Exception {
-
-	 }*/
 }
