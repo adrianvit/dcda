@@ -42,7 +42,7 @@
 			<td class="span2" data-bind="text: product_id"></td>
 			<td class="span2" data-bind="text: description"></td>
 			<td class="span2" data-bind="text: price"></td>
-			<td class="span2"><input class="span1" data-bind="value: $root.myquantity()[$index]"/></td>
+			<td class="span2"><input class="span1" data-bind="value: $root.myquantity()[$index()]"/></td>
 			<td class="span2"><button class="btn btn-info" data-bind="click: $root.showMap">Show on Map</button></td>
 			<td class="span2"><button class="btn btn-danger" data-bind="click: $root.removeItem">Remove from Cart</button></td>
 		</tr>
@@ -60,9 +60,27 @@
 				var self = this;
 			
 				self.isMap = ko.observable(false);
-				self.myquantity = ko.observableArray([0, 0]);
     			self.shoppingList = ko.observableArray([]);
-    			self.removeItem = function(product){
+    			self.shoppingList(localStorage.getObj('products'));
+
+    			function createQuantityArray(list) 
+				{
+    				console.log(list);
+				    var newList = []; 
+				    $.each(list, function (index, value) {
+				    	console.log(index + ": " + value);
+				        var newObj = ko.observable(1);
+				        newList.push(newObj); 
+				        console.log(newObj());
+				    }); 
+				    console.log(newList);
+				    return newList; 
+				}
+				self.myquantity = ko.observableArray(createQuantityArray(self.shoppingList()));
+				    			
+				
+				
+				self.removeItem = function(product){
     				self.shoppingList.remove(product);
     			};
 				self.goToProducts = function(){
@@ -72,12 +90,11 @@
     			self.totalToPay = ko.computed(function(){
     		        var total = 0;
     		        for(var i = 0; i < self.shoppingList().length; i++){
-    		            total += self.shoppingList()[i].price * self.myquantity()[i];
-    		            console.log(self.myquantity()[i]);
+    		            total += self.shoppingList()[i].price * self.myquantity()[i]();
+    		            console.log(self.myquantity()[i]());
     		        }
     		        return total;
     		    });
-    			self.shoppingList(localStorage.getObj('products'));
     			
     			self.showMap=function(product){
     				   self.isMap(true);

@@ -74,7 +74,9 @@
     			self.shoppingList = ko.observableArray([]);
 				self.flag = ko.observable(false);
 				
-				self.shoppingList(localStorage.getObj('products'));
+				if (localStorage.getItem('products') != null) {
+						self.shoppingList(localStorage.getObj('products'));
+					}
 				self.addToCart = function(product){
         			self.shoppingList.push(product);
         			console.log('product'+ self.shoppingList());
