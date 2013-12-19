@@ -13,7 +13,6 @@
 <script src="products.js"></script>
 <script src="objstorage.js"></script>
 
-
 </head>
 <body>
   
@@ -72,18 +71,17 @@
 				self.searchName = ko.observable();
 			    self.products = ko.observableArray([]);
 			    self.searchProducts = ko.observableArray([]);
-			    self.decoy = new Product("11","teeeef", "34", "44");
-    			self.shoppingList = ko.observableArray([self.decoy]);
-    			self.shoppingList.remove(self.decoy);
+    			self.shoppingList = ko.observableArray([]);
 				self.flag = ko.observable(false);
 				
+				self.shoppingList(localStorage.getObj('products'));
 				self.addToCart = function(product){
         			self.shoppingList.push(product);
-        			console.log('product'+ self.shoppingList);
+        			console.log('product'+ self.shoppingList());
    					};
     			self.goToCart = function(){
-					  localStorage.setObj('products',self.shoppingList);
-					  console.log('shopping list' + self.shoppingList);
+					  localStorage.setObj('products', self.shoppingList());
+					  console.log('shopping list' + self.shoppingList());
 					  window.location.replace("http://localhost:18080/webapp/mycart.html");
     			};
 				self.searchProduct = function(){

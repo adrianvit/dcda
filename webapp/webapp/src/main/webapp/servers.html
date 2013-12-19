@@ -27,12 +27,12 @@
 	<br>
 	<div>
 		<form class="form-search">
-			<input  type="text" class="input-medium search-query" data-bind="visible: newServer, value: servName"></input>
-			<input  type="text" class="input-medium search-query" data-bind="visible: newServer, value: servAddress"></input>
+			<input  type="text" class="input-medium search-query" placeholder="Server name" data-bind="visible: newServer, value: servName"></input>
+			<input  type="text" class="input-medium search-query" placeholder="Server address"  data-bind="visible: newServer, value: servAddress"></input>
 			<button class="btn btn btn-info" type="submit" data-bind="visible: newServer, click: $root.addServer">Add</button>
 		</form>
 	</div>
-	<table class="table table-hover" >
+	<table class="table table-hover span6" >
 		<thead>
 			<tr>
 				<th>Name</th>
@@ -42,9 +42,9 @@
 		</thead>
 		<tbody data-bind="foreach: servers">
 		<tr>
-			<td data-bind="text: name"></td>
-			<td data-bind="text: address"></td>
-			<td><button class="btn btn-danger" data-bind="click: $root.removeServer">Remove</button></td>
+			<td class="span2" data-bind="text: name"></td>
+			<td class="span2" data-bind="text: address"></td>
+			<td class="span2"><button class="btn btn-danger" data-bind="click: $root.removeServer">Remove</button></td>
 		</tr>
 		</tbody>
 	</table>
