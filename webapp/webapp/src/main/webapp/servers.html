@@ -48,13 +48,6 @@
 		</tr>
 		</tbody>
 	</table>
-	
-<!-- <div>	
-<ul class="pager">
-	<li><a href="#" data-bind="click: previousPage, visible: pageIndex() > 0">Previous</a></li>
-	<li><a href="#" data-bind="click: nextPage, visible: pageIndex() < 10">Next</a></li>
-</ul>
-</div> -->
 </div>
 	<script type="text/javascript">
 		function ServerViewModel() {
@@ -75,20 +68,6 @@
 			self.removeServer = function(server){
 				self.servers.remove(server);
 			};
-			/* self.pageSize = ko.observable(2);
-			self.pageIndex = ko.observable(0);
-			self.previousPage = function() {
-				self.pageIndex(self.pageIndex() - 1);
-			};
-			self.nextPage = function() {
-				self.pageIndex(self.pageIndex() + 1);
-			};
-
-			self.pagedRows = ko.dependentObservable(function() {
-				var size = this.pageSize();
-				var start = this.pageIndex() * size;
-				return self.products.slice(start, start + size);
-			}, self); */
 
 			$.getJSON("http://localhost:18080/central/locate/", function(
 					allData) {

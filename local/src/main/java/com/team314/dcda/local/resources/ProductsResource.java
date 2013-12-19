@@ -22,6 +22,8 @@ import org.slf4j.LoggerFactory;
 import com.team314.dcda.local.dao.LoggedUserDAO;
 import com.team314.dcda.local.dao.ProductDAO;
 import com.team314.dcda.local.db.Product;
+import com.team314.dcda.local.utils.ForbiddenException;
+import com.team314.dcda.local.utils.UnauthorizedException;
 import com.team314.dcda.local.utils.UserRoles;
 import com.team314.dcda.local.utils.Utils;
 
@@ -58,25 +60,37 @@ public class ProductsResource {
 	
 	@POST
 	@Consumes({"application/json"})
+	@Produces({"application/json"})
 	public Response createProduct(Product product, @Context HttpHeaders headers)
 	{
+		Boolean valid = false;
+		try {
+			valid = Utils.validateToken(headers, loggedUserDao, UserRoles.ADMIN.toString());
+		} catch (UnauthorizedException e1) {
+			LOG.debug("Unauthorized | Creating product");
+			throw new WebApplicationException(new Throwable("Unauthorized | Creating product"), 401);
+		} catch (ForbiddenException e1) {
+			LOG.debug("Forbiden | Creating product");
+			throw new WebApplicationException(new Throwable("Forbiden | Creating product"), 403);
+		}
+		
 		try
 		{
-			Boolean valid = Utils.validateToken(headers, loggedUserDao, UserRoles.ADMIN.toString());
-			
 			if(valid)
 			{
+				product.setProductid(null);
 				this.productdao.create(product);
-				return Response.status(200).build();			
+				return Response.status(200).entity(product).build();			
 			}else
 			{
 				LOG.debug("Could not validate token");
+				throw new WebApplicationException(new Throwable("Unauthorized | Creating product"), 401);
 			}
 		}catch(Exception e)
 		{
+			LOG.debug("Error creating product!", e);
 			throw new WebApplicationException(new Throwable("Error creating product!"), 500);
 		}
-		return Response.status(500).build();
 	}
 	
 	

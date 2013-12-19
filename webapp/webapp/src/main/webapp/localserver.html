@@ -12,56 +12,65 @@
 <script src="http://ajax.aspnetcdn.com/ajax/knockout/knockout-2.2.1.js"></script>
 <script src="products.js"></script>
 <script src="objstorage.js"></script>
-
+<script src="utils.js"></script>
 
 </head>
 <body>
-  
-<div class="container">
-	
-  	<div class="page-header">
- 		 <h1>Local Server Management</h1>
+
+	<div class="container">
+
+		<div class="page-header">
+			<h1>Local Server Management</h1>
+		</div>
+		<div>
+			<button class="btn btn-info"
+				data-bind="click: $root.addProductButton">Add new Product</button>
+		</div>
+		<br>
+		<div>
+			<form class="form-search">
+				<input type="text" class="input-medium search-query"
+					data-bind="visible: newProd, value: prodDescription"></input> <input
+					type="text" class="input-medium search-query"
+					data-bind="visible: newProd, value: prodPrice"></input> <input
+					type="text" class="input-medium search-query"
+					data-bind="visible: newProd, value: prodQuantity"></input>
+				<button class="btn btn btn-info" type="submit"
+					data-bind="visible: newProd, click: $root.addProduct">Add
+					to list</button>
+			</form>
+		</div>
+		<table class="table table-hover">
+			<thead>
+				<tr>
+					<th>Product ID</th>
+					<th>Description</th>
+					<th>Price</th>
+					<th>Quantity</th>
+					<th></th>
+				</tr>
+			</thead>
+			<tbody data-bind="foreach: pagedRows">
+				<tr>
+					<td data-bind="text: product_id"></td>
+					<td data-bind="text: description"></td>
+					<td data-bind="text: price"></td>
+					<td data-bind="text: quantity"></td>
+					<td><button class="btn btn-danger"
+							data-bind="click: $root.removeProduct">Remove</button></td>
+				</tr>
+			</tbody>
+		</table>
+
+		<div>
+			<ul class="pager">
+				<li><a href="#"
+					data-bind="click: previousPage, visible: pageIndex() > 0">Previous</a></li>
+				<li><a href="#"
+					data-bind="click: nextPage, visible: pageIndex() < 10">Next</a></li>
+			</ul>
+		</div>
 	</div>
-	<div>
-		<button class="btn btn-info" data-bind="click: $root.addProductButton">Add new Product</button>
-	</div>
-	<br>
-	<div>
-		<form class="form-search">
-			<input  type="text" class="input-medium search-query" data-bind="visible: newProd, value: prodDescription"></input>
-			<input  type="text" class="input-medium search-query" data-bind="visible: newProd, value: prodPrice"></input>
-			<input  type="text" class="input-medium search-query" data-bind="visible: newProd, value: prodQuantity"></input>
-			<button class="btn btn btn-info" type="submit" data-bind="visible: newProd, click: $root.addProduct">Add to list</button>
-		</form>
-	</div>
-	<table class="table table-hover" >
-		<thead>
-			<tr>
-				<th>Product ID</th>
-				<th>Description</th>
-				<th>Price</th>
-				<th>Quantity</th>
-				<th></th>
-			</tr>
-		</thead>
-		<tbody data-bind="foreach: pagedRows">
-		<tr>
-			<td data-bind="text: product_id"></td>
-			<td data-bind="text: description"></td>
-			<td data-bind="text: price"></td>
-			<td data-bind="text: quantity"></td>
-			<td><button class="btn btn-danger" data-bind="click: $root.removeProduct">Remove</button></td>
-		</tr>
-		</tbody>
-	</table>
-	
-<div>	
-<ul class="pager">
-	<li><a href="#" data-bind="click: previousPage, visible: pageIndex() > 0">Previous</a></li>
-	<li><a href="#" data-bind="click: nextPage, visible: pageIndex() < 10">Next</a></li>
-</ul>
-</div>
-</div>
 	<script type="text/javascript">
 		function LocalServerViewModel() {
 			var self = this;
@@ -75,12 +84,53 @@
 				self.newProd(true);
 			};
 			self.addProduct = function() {
-				self.products.push(new Product(100, self.prodDescription, self.prodPrice, self.prodQuantity));
+				
+				$.ajax({
+					type : "POST",
+					beforeSend: function (request)
+		            {
+		                request.setRequestHeader("Authorization", $.cookie("Authorization"));
+		            },
+					url : "http://localhost:18080/local/products",
+					data : JSON.stringify({
+						"description" : self.prodDescription(),
+						"category" : 0,
+						"quantity" : self.prodPrice(),
+						"price" : self.prodQuantity(),
+					}),
+					contentType : "application/json; charset=utf-8"
+				}).done(function(data, textStatus, jqXHR) {
+					console.log(jqXHR.status);
+					if (jqXHR.status == 200) {
+						console.log("Product created!");
+						self.products.push(new Product(data.productid, data.description,
+								data.price, data.quantity));
+					}
+				}).fail(function(data, textStatus, jqXHR) {
+					console.log(data.status);
+					alert("Could not add product.");
+				});
 				self.newProd(false);
 			};
 
-			self.removeProduct = function(product){
-				self.products.remove(product);
+			self.removeProduct = function(product) {
+				$.ajax({
+					type : "DELETE",
+					beforeSend: function (request)
+		            {
+		                request.setRequestHeader("Authorization", $.cookie("Authorization"));
+		            },
+					url : "http://localhost:18080/local/products/" + product.product_id
+				}).done(function(data, textStatus, jqXHR) {
+					console.log(jqXHR.status);
+					if (jqXHR.status == 200) {
+						console.log("Product deleted!");
+						self.products.remove(product);
+					}
+				}).fail(function(data, textStatus, jqXHR) {
+					console.log(data.status);
+					alert("Could not delete product.");
+				});
 			};
 			self.pageSize = ko.observable(3);
 			self.pageIndex = ko.observable(0);

@@ -107,8 +107,7 @@
 				this.login = function() {
 					console.log(this.username());
 					console.log(this.password());
-					$
-							.ajax({
+					$.ajax({
 								type : "POST",
 								url : "http://localhost:18080/local/login"
 										+ "?" + "email=" + this.username()
@@ -119,7 +118,7 @@
 									console.log(data.token);
 									console.log(jqXHR.status);
 									if (jqXHR.status = 200) {
-										document.cookie = "auth=" + data.token
+										document.cookie = "Authorization=" + data.token
 												+ "; path=/";
 										document.cookie = "role=" + data.role
 												+ "; path=/";
