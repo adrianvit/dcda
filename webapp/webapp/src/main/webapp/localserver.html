@@ -28,9 +28,9 @@
 	<br>
 	<div>
 		<form class="form-search">
-			<input  type="text" class="input-medium search-query" data-bind="visible: newProd, value: prodDescription"></input>
-			<input  type="text" class="input-medium search-query" data-bind="visible: newProd, value: prodPrice"></input>
-			<input  type="text" class="input-medium search-query" data-bind="visible: newProd, value: prodQuantity"></input>
+			<input  type="text" class="input-medium search-query" placeholder="Description" data-bind="visible: newProd, value: prodDescription"></input>
+			<input  type="text" class="input-medium search-query" placeholder="Price" data-bind="visible: newProd, value: prodPrice"></input>
+			<input  type="text" class="input-medium search-query" placeholder="Quantity" data-bind="visible: newProd, value: prodQuantity"></input>
 			<button class="btn btn btn-info" type="submit" data-bind="visible: newProd, click: $root.addProduct">Add to list</button>
 		</form>
 	</div>
