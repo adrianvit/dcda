@@ -23,9 +23,15 @@
  	</div>
 	<button class="btn btn-success" type="submit" data-bind="click: $root.goToProducts">Back to shopping</button>
 	<h3 style="float: right;">
+	<button class="btn btn-success"  type="submit" data-bind="click: $root.placeOrder"><b>Send order</b></button>
+	</h3>
+	<h3 style="float: right;">
         Total: <span data-bind="text: totalToPay().toFixed(2)"></span> RON
 	</h3>
-	<br>
+	
+	
+	
+	
 	<table class="table span10 table-hover" >
 		<thead>
 			<tr>
@@ -48,6 +54,8 @@
 		</tr>
 		</tbody>
 	</table>
+	
+	
 	
 	<br><br>
 	 <div><h1 id="map" data-bind="visible: isMap" style="margin: 0 auto; width: 800px; height: 600px; "></h1></div>
@@ -116,6 +124,12 @@
     	                         " to:" + tailMarker.getPoint().lat() + "," + 
     	                         tailMarker.getPoint().lng(), 
     	                         { getPolyline: true, getSteps: true }); 
+    			};
+    			self.placeOrder = function(){
+    				 for(var i = 0; i < self.shoppingList().length; i++){
+    				 console.log(self.shoppingList()[i].product_id + " "+ self.shoppingList()[i].description + " "+
+    						 self.shoppingList()[i].price + " " self.myquantity()[i]())
+    				 }
     			};
 			};
 			ko.applyBindings(new MyCartViewModel());
