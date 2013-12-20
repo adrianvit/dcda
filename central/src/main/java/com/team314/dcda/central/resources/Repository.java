@@ -125,4 +125,27 @@ public class Repository {
 			throw new WebApplicationException(new Throwable("Could not find server!"), 404);
 		}
 	}
+	
+	@Path("/server/{host}/location")
+	@GET
+	@Produces({"application/json"})
+	public Response getServerLocation(@PathParam ("host") String host)
+	{
+		Server temp = null;
+		List<Server> serverList = serverDAO.getServers();
+		for(Server s: serverList){
+			if(s.getAddress().equals(host)){
+				temp = s;
+				break;
+			}
+		}
+		if(temp!=null)
+		{
+			return Response.status(200).entity(temp).build();
+		}
+		else
+		{
+			throw new WebApplicationException(new Throwable("Could not find server!"), 404);
+		}
+	}
 }

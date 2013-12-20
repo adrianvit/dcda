@@ -10,6 +10,7 @@
 <script
 	src="http://netdna.bootstrapcdn.com/twitter-bootstrap/2.3.2/js/bootstrap.min.js"></script>
 <script src="http://ajax.aspnetcdn.com/ajax/knockout/knockout-2.2.1.js"></script>
+<script src="utils.js"></script>
 </head>
 <body>
 	<div class="navbar">
@@ -107,7 +108,8 @@
 				this.login = function() {
 					console.log(this.username());
 					console.log(this.password());
-					$.ajax({
+					$
+							.ajax({
 								type : "POST",
 								url : "http://localhost:18080/local/login"
 										+ "?" + "email=" + this.username()
@@ -118,15 +120,24 @@
 									console.log(data.token);
 									console.log(jqXHR.status);
 									if (jqXHR.status = 200) {
-										document.cookie = "Authorization=" + data.token
-												+ "; path=/";
+										document.cookie = "Authorization="
+												+ data.token + "; path=/";
 										document.cookie = "role=" + data.role
 												+ "; path=/";
-										document.cookie = "UserId=" + data.userid
-										+ "; path=/";		
+										document.cookie = "UserId="
+												+ data.userid + "; path=/";
 									}
-									window.location
-											.replace("http://localhost:18080/webapp/main.html");
+									if ($.cookie("role") == "user") {
+
+										window.location
+												.replace("http://localhost:18080/webapp/main.html");
+									}
+
+									if ($.cookie("role") == "ADMIN") {
+
+										window.location
+												.replace("http://localhost:18080/webapp/localserver.html");
+									}
 								},
 								dataType : "json",
 								contentType : "application/json; charset=utf-8"
@@ -140,20 +151,19 @@
 					console.log(this.email());
 					console.log(this.address());
 					$.ajax({
-								type : "POST",
-								url : "http://localhost:18080/local/users",
-								data : JSON.stringify({
-									"firstName" : this.firstName(),
-									"lastName" : this.lastName(),
-									"pass" : this.password(),
-									"phone" : this.phone(),
-									"email" : this.email(),
-									"role" : "USER",
-									"userId" : "0"
-								}),
-								contentType : "application/json; charset=utf-8"
-							}
-					).done(function(data, textStatus, jqXHR) {
+						type : "POST",
+						url : "http://localhost:18080/local/users",
+						data : JSON.stringify({
+							"firstName" : this.firstName(),
+							"lastName" : this.lastName(),
+							"pass" : this.password(),
+							"phone" : this.phone(),
+							"email" : this.email(),
+							"role" : "USER",
+							"userId" : "0"
+						}),
+						contentType : "application/json; charset=utf-8"
+					}).done(function(data, textStatus, jqXHR) {
 						console.log(jqXHR.status);
 						if (jqXHR.status == 200) {
 							console.log("User created ! Storing address...");

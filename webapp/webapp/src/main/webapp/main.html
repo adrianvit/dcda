@@ -15,7 +15,11 @@
 <script src="utils.js"></script>
 </head>
 <body>
-  
+ 	<div class="navbar">
+		<div class="navbar-inner">
+			<a class="brand" href="#">Package Management</a>
+		</div>
+	</div> 
 <div class="container">
 	
   	<br><br>
@@ -154,7 +158,7 @@
     				}, self);
     			
 			    $.getJSON("http://localhost:18080/local/products/", function(allData) {
-			        var mappedProducts = $.map(allData, function(item) { return new Product(item.productid, item.description, item.price, item.quantity) });
+			        var mappedProducts = $.map(allData, function(item) { return new Product(item.productid, item.description, item.price, item.quantity, "localhost") });
 			        self.products(mappedProducts);
 			    }); 
 			};

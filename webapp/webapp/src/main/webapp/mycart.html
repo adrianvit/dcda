@@ -17,7 +17,11 @@
            type="text/javascript"></script> 
 </head>
 <body>
-
+	<div class="navbar">
+		<div class="navbar-inner">
+			<a class="brand" href="#">Package Management</a>
+		</div>
+	</div>
 <div class="container">
 	<div class="page-header">
  		 <h1>My Shopping Cart</h1>
@@ -111,13 +115,34 @@
     				   var directions = new GDirections(map);
     				   var isCreateHeadPoint = true;
     				   var headMarker, tailMarker;
-
-    				   map.setCenter(new GLatLng(45.76,21.23), 12);
+					   var lat, lon;	
+    				   //map.setCenter(new GLatLng(45.76,21.23), 12);
+    				   //get coordinates
+    				   $.ajax({
+	    					type : "GET",
+	    					beforeSend: function (request)
+	    		            {
+	    		                request.setRequestHeader("Authorization", $.cookie("Authorization"));
+	    		            },
+	    					url : "http://localhost:18080/central/locate/server/" + product.host 
+	    					+ "/location",
+	    					async: false,
+	    					crossDomain: true
+	    				}).done(function(data, textStatus, jqXHR) {
+	    					console.log(jqXHR.status);
+	    					if (jqXHR.status == 200) {
+	    						console.log("Order sent! " + data.latitude + " " + data.longitude);
+	    						lat = data.latitude;
+	    						lon = data.longitude;
+	    					}
+	    				}).fail(function(data, textStatus, jqXHR) {
+	    					console.log(data.status);
+	    				});
     				   
     				   var point1 = new google.maps.LatLng(45.76,21.23);
     				   headMarker = new GMarker(point1); //get point from DB
     			       map.addOverlay(headMarker);
-    			       var point2 = new google.maps.LatLng(46.172698,21.315826);
+    			       var point2 = new google.maps.LatLng(lat,lon);
     			       tailMarker = new GMarker(point2);//get point from DB
     			       map.addOverlay(tailMarker);
     			       directions.load("from:" + headMarker.getPoint().lat()+ ", " + 

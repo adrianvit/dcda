@@ -65,7 +65,7 @@ public class LoggedUserDAO extends GenericDAO<LoggedUser, Integer>{
 		}
 		else
 		{	
-			if(!loggedUser.getRole().equals(role))
+			if(!loggedUser.getRole().toLowerCase().equals(role.toLowerCase()))
 			{
 				throw new UnauthorizedException();
 			}
