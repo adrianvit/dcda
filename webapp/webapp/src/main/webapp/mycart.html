@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Shopping cart</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link
+	href="http://netdna.bootstrapcdn.com/twitter-bootstrap/2.3.2/css/bootstrap-combined.min.css"
+	rel="stylesheet">
+<script src="http://ajax.aspnetcdn.com/ajax/jquery/jquery-1.9.0.js"></script>
+<script
+	src="http://netdna.bootstrapcdn.com/twitter-bootstrap/2.3.2/js/bootstrap.min.js"></script>
+<script src="http://ajax.aspnetcdn.com/ajax/knockout/knockout-2.2.1.js"></script>
+<script src="products.js"></script>
+<script src="objstorage.js"></script>
+<script src="utils.js"></script>
+<script src="http://maps.google.com/maps?file=api&amp;v=2&amp;sensor=false" 
+           type="text/javascript"></script> 
+</head>
+<body>
+
+<div class="container">
+	<div class="page-header">
+ 		 <h1>My Shopping Cart</h1>
+ 	</div>
+	<button class="btn btn-success" type="submit" data-bind="click: $root.goToProducts">Back to shopping</button>
+	<h3 style="float: right;">
+	<button class="btn btn-success"  type="submit" data-bind="click: $root.placeOrder"><b>Send order</b></button>
+	</h3>
+	<h3 style="float: right;">
+        Total: <span data-bind="text: totalToPay().toFixed(2)"></span> RON
+	</h3>
+	
+	
+	
+	
+	<table class="table span10 table-hover" >
+		<thead>
+			<tr>
+				<th>Product ID</th>
+				<th>Description</th>
+				<th>Price</th>
+				<th>Quantity</th>
+				<th>View Map</th>
+				<th>Order</th>
+			</tr>
+		</thead>
+		<tbody data-bind="foreach: $root.shoppingList">
+		<tr>
+			<td class="span2" data-bind="text: product_id"></td>
+			<td class="span2" data-bind="text: description"></td>
+			<td class="span2" data-bind="text: price"></td>
+			<td class="span2"><input class="span1" data-bind="value: $root.myquantity()[$index()]"/></td>
+			<td class="span2"><button class="btn btn-info" data-bind="click: $root.showMap">Show on Map</button></td>
+			<td class="span2"><button class="btn btn-danger" data-bind="click: $root.removeItem">Remove from Cart</button></td>
+		</tr>
+		</tbody>
+	</table>
+	
+	
+	
+	<br><br>
+	 <div><h1 id="map" data-bind="visible: isMap" style="margin: 0 auto; width: 800px; height: 600px; "></h1></div>
+	 
+</div>
+
+	<script type="text/javascript">
+
+			function MyCartViewModel() {
+				var self = this;
+			
+				self.isMap = ko.observable(false);
+    			self.shoppingList = ko.observableArray([]);
+    			self.shoppingList(localStorage.getObj('products'));
+
+    			function createQuantityArray(list) 
+				{
+    				console.log(list);
+				    var newList = []; 
+				    $.each(list, function (index, value) {
+				    	console.log(index + ": " + value);
+				        var newObj = ko.observable(1);
+				        newList.push(newObj); 
+				        console.log(newObj());
+				    }); 
+				    console.log(newList);
+				    return newList; 
+				}
+				self.myquantity = ko.observableArray(createQuantityArray(self.shoppingList()));
+				    			
+				
+				
+				self.removeItem = function(product){
+    				self.shoppingList.remove(product);
+    			};
+				self.goToProducts = function(){
+					  localStorage.setObj('products',self.shoppingList());
+					  window.location.replace("http://localhost:18080/webapp/main.html");
+    			};
+    			self.totalToPay = ko.computed(function(){
+    		        var total = 0;
+    		        for(var i = 0; i < self.shoppingList().length; i++){
+    		            total += self.shoppingList()[i].price * self.myquantity()[i]();
+    		            console.log(self.myquantity()[i]());
+    		        }
+    		        return total;
+    		    });
+    			
+    			self.showMap=function(product){
+    				   self.isMap(true);
+    				   var map = new GMap2(document.getElementById("map"));
+    				   var directions = new GDirections(map);
+    				   var isCreateHeadPoint = true;
+    				   var headMarker, tailMarker;
+
+    				   map.setCenter(new GLatLng(45.76,21.23), 12);
+    				   
+    				   var point1 = new google.maps.LatLng(45.76,21.23);
+    				   headMarker = new GMarker(point1); //get point from DB
+    			       map.addOverlay(headMarker);
+    			       var point2 = new google.maps.LatLng(46.172698,21.315826);
+    			       tailMarker = new GMarker(point2);//get point from DB
+    			       map.addOverlay(tailMarker);
+    			       directions.load("from:" + headMarker.getPoint().lat()+ ", " + 
+    	                         headMarker.getPoint().lng() + 
+    	                         " to:" + tailMarker.getPoint().lat() + "," + 
+    	                         tailMarker.getPoint().lng(), 
+    	                         { getPolyline: true, getSteps: true }); 
+    			};
+    			
+    			self.placeOrder = function(){
+    				 for(var i = 0; i < self.shoppingList().length; i++){
+    				 console.log(self.shoppingList()[i].product_id + " "+ self.shoppingList()[i].description + " "+
+    						 self.shoppingList()[i].price + " " + self.myquantity()[i]());
+    				 
+	     				$.ajax({
+	    					type : "POST",
+	    					beforeSend: function (request)
+	    		            {
+	    		                request.setRequestHeader("Authorization", $.cookie("Authorization"));
+	    		            },
+	    					url : "http://localhost:18080/local/users/" + $.cookie("UserId") 
+	    					+ "/orders?" + "pid=" + self.shoppingList()[i].product_id
+	    					+ "&host=" + self.shoppingList()[i].host
+	    					+ "&quantity=" + self.myquantity()[i](),
+	    					async: false,
+	    					crossDomain: true
+	    				}).done(function(data, textStatus, jqXHR) {
+	    					console.log(jqXHR.status);
+	    					if (jqXHR.status == 200) {
+	    						console.log("Order sent! " + data.productid);
+	    					}
+	    				}).fail(function(data, textStatus, jqXHR) {
+	    					console.log(data.status);
+	    				});
+    				 }
+    				 alert("Your order has been sent!");
+    			};
+			};
+			ko.applyBindings(new MyCartViewModel());
+	</script>
+</body>
+</html>
+			

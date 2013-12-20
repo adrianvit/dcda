@@ -5,20 +5,11 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.URI;
-import java.util.List;
-import java.util.concurrent.CompletionService;
-import java.util.concurrent.ExecutorCompletionService;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.concurrent.Future;
-import java.util.concurrent.TimeUnit;
 
 import javax.naming.Context;
 import javax.naming.InitialContext;
 import javax.naming.NamingException;
 import javax.ws.rs.core.HttpHeaders;
-import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.UriBuilder;
 
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
@@ -29,21 +20,12 @@ import org.apache.http.client.methods.HttpPost;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.impl.conn.tsccm.ThreadSafeClientConnManager;
 import org.apache.http.params.HttpParams;
+import org.mindrot.jbcrypt.BCrypt;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.sun.jersey.api.client.AsyncWebResource;
-import com.sun.jersey.api.client.Client;
-import com.sun.jersey.api.client.GenericType;
-import com.sun.jersey.api.client.WebResource;
-import com.sun.jersey.api.client.config.ClientConfig;
-import com.sun.jersey.api.client.config.DefaultClientConfig;
-import com.sun.jersey.api.json.JSONConfiguration;
-import com.sun.jersey.client.non.blocking.NonBlockingClient;
-import com.sun.jersey.client.non.blocking.config.DefaultNonBlockingClientConfig;
-import com.sun.jersey.client.non.blocking.config.NonBlockingClientConfig;
 import com.team314.dcda.local.dao.LoggedUserDAO;
-import com.team314.dcda.local.db.Peer;
+import com.team314.dcda.local.db.LoggedUser;
 
 
 public class Utils {
@@ -51,8 +33,8 @@ public class Utils {
 	public static final String local_ip_jndi_name = "LocalIp";
 	public static final String local_name_jndi_name = "LocalName";
 	public static final String central_ip = "localhost";
-	public static final String central_path = "central/rest/locate";
-	public static final String central_path_register = "central/rest/register";
+	public static final String central_path = "central/locate";
+	public static final String central_path_register = "central/register";
 	public static final String scheme  = "http";
 	public static final int central_port = 18080;
 	private static final Logger LOG = LoggerFactory.getLogger(Utils.class);
@@ -153,7 +135,7 @@ public class Utils {
 	}
 	
 	
-	public static boolean validateToken(int id, HttpHeaders headers, LoggedUserDAO loggedUserDao, String role) throws UnauthorizedException, ForbiddenException
+	public static boolean validateToken(HttpHeaders headers, LoggedUserDAO loggedUserDao, String role) throws UnauthorizedException, ForbiddenException
 	{
 		String token = null;
 		try
@@ -169,7 +151,8 @@ public class Utils {
 		{
 			String valid = null;
 			try {
-				valid = loggedUserDao.validateToken(id, token, role);
+				LoggedUser loggedUser = loggedUserDao.getUserIdByToken(token);
+				valid = loggedUserDao.validateToken(loggedUser, token, role);
 			} catch (UnauthorizedException e) {
 				throw e;
 			} catch (ForbiddenException e) {
@@ -203,55 +186,18 @@ public class Utils {
 		return temp;
 	}
 	
-	
-/*	public static List<URI> searchForProductsInPeer(Peer peer, String key, int ttl)
-	{
-		UriBuilder uriBuilder = UriBuilder.fromUri("/local");
-		//uriBuilder.scheme("http").host(peer.getUrl()).port(8080);
-		uriBuilder.scheme("http").host("localhost").path("/search").queryParam("key", key).queryParam("ttl", Integer.toString(ttl-2)).port(18080);
-		URI uri = uriBuilder.build();
-		try
-		{
-			 ClientConfig cc2 = new DefaultClientConfig();
-			 cc2.getFeatures().put(JSONConfiguration.FEATURE_POJO_MAPPING, Boolean.TRUE);
-			 Client c2 = Client.create(cc2);
-			 WebResource wr = c2.resource(uri);
-			 String temp= wr.accept(MediaType.APPLICATION_JSON).get(String.class);
-			 
-			 ClientConfig cc = new DefaultNonBlockingClientConfig();
-			 cc.getProperties().put(NonBlockingClientConfig.PROPERTY_THREADPOOL_SIZE, 10);
-			 cc.getFeatures().put(JSONConfiguration.FEATURE_POJO_MAPPING, Boolean.TRUE);
-			 Client c = NonBlockingClient.create(cc);
-			 c.setConnectTimeout(1000);
-			 AsyncWebResource awr = c.asyncResource(uri);
-			 Future<List<URI>> responseFuture = awr.accept(MediaType.APPLICATION_JSON).get(new GenericType<List<URI>>(){});
-			 
-			 CompletionService<List<URI>> taskCompletionService = new ExecutorCompletionService<List<URI>>(c.getExecutorService());
-			 taskCompletionService.submit(awr.accept(MediaType.APPLICATION_JSON).get(new GenericType<List<URI>>(){}));
-			 
-			 return responseFuture.get(2, TimeUnit.SECONDS);		
-		}catch(Exception e)
-		{
-			LOG.error("Error searching for products", e);
-			return null;
-		}
-	}
-	
-	public static List<URI> searchForProductsInPeerTask(Peer peer, String key, int ttl)
-	{
+	public static String hashPassword(String originalPassword){
 		
-		UriBuilder uriBuilder = UriBuilder.fromUri("/local");
-		uriBuilder.scheme("http").host("localhost").path("/search").queryParam("key", key).queryParam("ttl", Integer.toString(ttl-2)).port(18080);
-		URI uri = uriBuilder.build();
-		ClientConfig cc = new DefaultClientConfig();
-		cc.getFeatures().put(JSONConfiguration.FEATURE_POJO_MAPPING, Boolean.TRUE);
-		Client c = Client.create(cc);
-		WebResource wr = c.resource(uri);
-		List<URI> result = wr.accept(MediaType.APPLICATION_JSON).get(new GenericType<List<URI>>(){});
-		return result;
+		return BCrypt.hashpw(originalPassword, BCrypt.gensalt(12));
 	}
 	
-	 public static void main(final String[] args) throws Exception {
-
-	 }*/
+	public static boolean checkPassword(String password, String hashed){
+		
+		return BCrypt.checkpw(password, hashed);
+	}
+	
+	public static void main(String[] args){
+		
+		System.out.println(Utils.hashPassword("asd123"));
+	}
 }

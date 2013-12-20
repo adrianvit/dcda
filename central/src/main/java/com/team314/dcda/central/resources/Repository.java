@@ -45,13 +45,15 @@ public class Repository {
 	
 	
 	@POST
-	public Response addServer(@QueryParam("name") String name,@QueryParam("adr") String address)
+	public Response addServer(@QueryParam("name") String name,@QueryParam("adr") String address, @QueryParam("lat") Double latitude, @QueryParam("lon") Double longitude)
 	{
 		try
 		{	
 			Server temp = new Server();
 			temp.setName(name);
 			temp.setAddress(address);
+			temp.setLatitude(latitude);
+			temp.setLongitude(longitude);
 			serverDAO.create(temp);
 			return Response.status(200).build();
 		}catch(Exception e)
@@ -61,7 +63,7 @@ public class Repository {
 	}
 	
 	
-	@Path("/{name}")
+	@Path("/server/{name}")
 	@PUT
 	public Response updateServer(@PathParam("name") String name, @QueryParam("adr") String adr)
 	{
@@ -85,7 +87,7 @@ public class Repository {
 		}
 	}
 	
-	@Path("/{name}")
+	@Path("/server/{name}")
 	@DELETE
 	public Response removeServer(@PathParam ("name") String name)
 	{
@@ -108,7 +110,7 @@ public class Repository {
 		}
 	}
 	
-	@Path("/{name}")
+	@Path("/server/{name}")
 	@GET
 	@Produces(MediaType.TEXT_PLAIN)
 	public Response getServer(@PathParam ("name") String name)

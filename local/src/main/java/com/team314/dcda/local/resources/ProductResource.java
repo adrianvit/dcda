@@ -5,6 +5,7 @@ import javax.ejb.Stateless;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
+import javax.ws.rs.OPTIONS;
 import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
@@ -23,6 +24,7 @@ import com.team314.dcda.local.dao.ProductDAO;
 import com.team314.dcda.local.db.Product;
 import com.team314.dcda.local.utils.ForbiddenException;
 import com.team314.dcda.local.utils.UnauthorizedException;
+import com.team314.dcda.local.utils.UserRoles;
 import com.team314.dcda.local.utils.Utils;
 
 
@@ -46,7 +48,31 @@ public class ProductResource {
 				Product temp = this.productdao.find(id);
 				if(temp != null)
 				{
-					return Response.status(200).entity(temp).build();			
+					//add header Access-Control-Allow-Credentials true
+					return Response.status(200).header("Access-Control-Allow-Origin", "*").entity(temp).build();			
+				}
+				else
+				{
+					throw new WebApplicationException(new Throwable("User not found!"), 404);
+				}		
+			
+		}catch(Exception e)
+		{
+			return Response.status(500).build();
+		}
+		
+	}
+	
+	@OPTIONS
+	@Produces({"application/json"})
+	public Response getOptions(@PathParam("id") Integer id, @Context HttpHeaders headers)
+	{
+		try {
+				Product temp = this.productdao.find(id);
+				if(temp != null)
+				{
+					//add header Access-Control-Allow-Credentials true
+					return Response.status(200).header("Access-Control-Allow-Origin", "*").entity(temp).build();			
 				}
 				else
 				{
@@ -62,12 +88,12 @@ public class ProductResource {
 	
 	@PUT
 	@Consumes({"application/json"})
-	public Response put(Product product,@PathParam("id") Integer id, @QueryParam("userId") Integer userId,  @Context HttpHeaders headers)
+	public Response put(Product product,@PathParam("id") Integer id,  @Context HttpHeaders headers)
 	{
 		
 		
 		try {
-			Boolean valid = Utils.validateToken(userId, headers, loggedUserDao, "admin");
+			Boolean valid = Utils.validateToken(headers, loggedUserDao, UserRoles.ADMIN.toString());
 			
 			//sanity check
 			if(id != product.getProductid())
@@ -101,10 +127,8 @@ public class ProductResource {
 				LOG.debug("Could not validate token");
 			}
 		} catch (UnauthorizedException e1) {
-			// TODO Auto-generated catch block
 			e1.printStackTrace();
 		} catch (ForbiddenException e1) {
-			// TODO Auto-generated catch block
 			e1.printStackTrace();
 		}catch(Exception e)
 		{
@@ -116,11 +140,11 @@ public class ProductResource {
 	}
 	
 	@DELETE
-	public Response delete(@PathParam("id") Integer id, @QueryParam("userId") Integer userId,  @Context HttpHeaders headers)
+	public Response delete(@PathParam("id") Integer id,  @Context HttpHeaders headers)
 	{
 
 		try {
-			Boolean valid = Utils.validateToken(userId, headers, loggedUserDao, "admin");
+			Boolean valid = Utils.validateToken(headers, loggedUserDao, UserRoles.ADMIN.toString());
 			
 			if(valid)
 			{
@@ -148,10 +172,8 @@ public class ProductResource {
 				LOG.debug("Could not validate token");
 			}
 		} catch (UnauthorizedException e1) {
-			// TODO Auto-generated catch block
 			e1.printStackTrace();
 		} catch (ForbiddenException e1) {
-			// TODO Auto-generated catch block
 			e1.printStackTrace();
 		}catch(Exception e)
 		{

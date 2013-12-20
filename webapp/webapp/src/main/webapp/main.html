@@ -10,50 +10,155 @@
 <script
 	src="http://netdna.bootstrapcdn.com/twitter-bootstrap/2.3.2/js/bootstrap.min.js"></script>
 <script src="http://ajax.aspnetcdn.com/ajax/knockout/knockout-2.2.1.js"></script>
+<script src="products.js"></script>
+<script src="objstorage.js"></script>
+<script src="utils.js"></script>
 </head>
 <body>
-<div class="well">
-	<table class="table" >
+  
+<div class="container">
+	
+  	<br><br>
+  	<div class="page-header">
+ 		 <h1>List of Products</h1>
+	</div>
+	
+	<div>
+	<form class="form-search">
+		<input  type="text" class="input-medium search-query" data-bind="value: searchName"></input>
+		<button class="btn btn btn-info" type="submit" data-bind="click: $root.searchProduct">Search product</button>
+		<button class="btn btn-success" type="submit" style="float: right;" data-bind="click: $root.goToCart">My Shopping Cart</button>
+	</form>
+	</div>
+	
+  	<div>
+	<table class="table table-hover table-condensed">
 		<thead>
 			<tr>
-				<th>Product ID</th>
-				<th>Description</th>
-				<th>Price</th>
-				<th>Quantity</th>
+				<th  width='15%'>Product ID</th>
+				<th  width='25%'>Description</th>
+				<th  width='15%'>Price</th>
+				<th  width='15%'>Quantity</th>
+				<th  width='25%'>Order</th>
 			</tr>
 		</thead>
-		<tbody data-bind="foreach: products">
+		<tbody data-bind="foreach: pagedRows">
 		<tr>
 			<td data-bind="text: product_id"></td>
 			<td data-bind="text: description"></td>
 			<td data-bind="text: price"></td>
 			<td data-bind="text: quantity"></td>
+			<td><button class="btn" data-bind="click: $root.addToCart">Add to Cart</button></td>
 		</tr>
 		</tbody>
 	</table>
+	</div>
+<div>	
+<ul class="pager">
+	<li><a href="#" data-bind="click: previousPage, visible: pageIndex() > 0">Previous</a></li>
+	<li><a href="#" data-bind="click: nextPage, visible: pageIndex() < 10">Next</a></li>
+</ul>
 </div>
-
+<div>
+		<button class="btn btn-info" type="submit" data-bind="visible: $root.flag, click: $root.backToProducts"><i class="icon-arrow-left"></i> Local products</button>
+</div>
+</div>
 	<script type="text/javascript">
 
-			function Product(product_id, description, price, quantity) {
-				var self = this;
-				self.product_id = product_id;
-				self.description = description;
-				self.price = price;
-				self.quantity = quantity;
-			}
-			
 			function AppViewModel() {
 				var self = this;
 				
+				self.searchName = ko.observable();
 			    self.products = ko.observableArray([]);
-			    
+			    self.searchProducts = ko.observableArray([]);
+    			self.shoppingList = ko.observableArray([]);
+				self.flag = ko.observable(false);
+				
+				if (localStorage.getItem('products') != null) {
+						self.shoppingList(localStorage.getObj('products'));
+					}
+				self.addToCart = function(product){
+        			self.shoppingList.push(product);
+        			console.log('product'+ self.shoppingList());
+   					};
+    			self.goToCart = function(){
+					  localStorage.setObj('products', self.shoppingList());
+					  console.log('shopping list' + self.shoppingList());
+					  window.location.replace("http://localhost:18080/webapp/mycart.html");
+    			};
+    			
+				self.searchProduct = function()
+				{
+					 $.getJSON("http://localhost:18080/local/search?key=" + self.searchName() + "&ttl=2", function(allData) 
+							 {
+			        			var mappedProducts = new Array(); 
+			        			for(var i = 0; i < allData.length; i++)
+			        			{ 
+							        var item = allData[i];				
+			        				console.log(item);
+			        				$.ajax({
+			        					type : "GET",
+			        					url : item,
+			        					async: false,
+			        					crossDomain: true
+			        				}).done(function(data, textStatus, jqXHR) {
+			        					console.log(jqXHR.status);
+			        					if (jqXHR.status == 200) {
+			        						console.log("Got added! " + data.productid);
+			        						
+			        						var parser = document.createElement('a');
+			        						parser.href = item; 
+			        						console.log(parser.hostname);
+			        						mappedProducts[i] = new Product(data.productid, data.description, data.price, data.quantity, parser.hostname);
+			        					}
+			        				}).fail(function(data, textStatus, jqXHR) {
+			        					console.log(data.status);
+			        				});
+			        	
+			    				}
+			        				console.log(mappedProducts);
+			        				self.searchProducts(mappedProducts);
+			    					self.flag(true);
+							 });
+				};
+				
+				self.backToProducts = function(){
+				 	$.getJSON("http://localhost:18080/local/products/", function(allData) {
+			        var mappedProducts = $.map(allData, function(item) { return new Product(item.productid, item.description, item.price, item.quantity, "localhost") });
+			        self.products(mappedProducts);
+			    });
+			    self.flag(false); 
+				};
+				
+				
+			    self.pageSize = ko.observable(3);
+        		self.pageIndex = ko.observable(0);
+        		self.previousPage = function() {
+            		self.pageIndex(self.pageIndex() - 1);
+        		};
+        		
+        		
+        		self.nextPage = function() {
+            		self.pageIndex(self.pageIndex() + 1);
+    			};
+
+    			self.pagedRows = ko.dependentObservable(function() {
+       				 	var size = this.pageSize();
+        				var start = this.pageIndex() * size;
+        				console.log("Flag: " + self.flag());
+        				if(self.flag() == true){
+        					return self.searchProducts.slice(start, start + size);
+        				} else {
+	        				return self.products.slice(start, start + size);
+        				}
+    				}, self);
+    			
 			    $.getJSON("http://localhost:18080/local/products/", function(allData) {
 			        var mappedProducts = $.map(allData, function(item) { return new Product(item.productid, item.description, item.price, item.quantity) });
 			        self.products(mappedProducts);
 			    }); 
-				
-			}
+			};
+			
 			ko.applyBindings(new AppViewModel());
 	</script>
 </body>

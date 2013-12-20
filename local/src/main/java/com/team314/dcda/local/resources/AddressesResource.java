@@ -25,6 +25,7 @@ import com.team314.dcda.local.db.Address;
 import com.team314.dcda.local.db.User;
 import com.team314.dcda.local.utils.ForbiddenException;
 import com.team314.dcda.local.utils.UnauthorizedException;
+import com.team314.dcda.local.utils.UserRoles;
 import com.team314.dcda.local.utils.Utils;
 
 
@@ -48,7 +49,7 @@ public class AddressesResource {
 	public Response getAddresses(@PathParam("id") Integer id, @Context HttpHeaders headers)
 	{		
 		try {
-			Boolean valid = Utils.validateToken(id, headers, loggedUserDao, "user");
+			Boolean valid = Utils.validateToken(headers, loggedUserDao, UserRoles.USER.toString());
 			
 			if(valid)
 			{
@@ -88,7 +89,7 @@ public class AddressesResource {
 		
 		
 		try {
-			Boolean valid = Utils.validateToken(id, headers, loggedUserDao, "user");
+			Boolean valid = Utils.validateToken(headers, loggedUserDao, UserRoles.USER.toString());
 			
 			if(valid)
 			{
