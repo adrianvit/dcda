@@ -125,10 +125,11 @@
     	                         tailMarker.getPoint().lng(), 
     	                         { getPolyline: true, getSteps: true }); 
     			};
+    			
     			self.placeOrder = function(){
     				 for(var i = 0; i < self.shoppingList().length; i++){
     				 console.log(self.shoppingList()[i].product_id + " "+ self.shoppingList()[i].description + " "+
-    						 self.shoppingList()[i].price + " " self.myquantity()[i]())
+    						 self.shoppingList()[i].price + " " + self.myquantity()[i]());
     				 }
     			};
 			};

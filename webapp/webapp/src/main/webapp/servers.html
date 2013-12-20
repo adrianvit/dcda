@@ -13,6 +13,7 @@
 <script src="products.js"></script>
 <script src="objstorage.js"></script>
 <script src="servers.js"></script>
+<script src="utils.js"></script>
 </head>
 
 <body>
@@ -29,6 +30,8 @@
 		<form class="form-search">
 			<input  type="text" class="input-medium search-query" placeholder="Server name" data-bind="visible: newServer, value: servName"></input>
 			<input  type="text" class="input-medium search-query" placeholder="Server address"  data-bind="visible: newServer, value: servAddress"></input>
+			<input  type="number" step="any"  class="input-medium search-query" placeholder="Latitude" data-bind="visible: newServer, value: servLon"></input>
+			<input  type="number" step="any"  class="input-medium search-query" placeholder="Longitude"  data-bind="visible: newServer, value: servLat"></input>
 			<button class="btn btn btn-info" type="submit" data-bind="visible: newServer, click: $root.addServer">Add</button>
 		</form>
 	</div>
@@ -37,6 +40,8 @@
 			<tr>
 				<th>Name</th>
 				<th>Address</th>
+				<th>Latitude</th>
+				<th>Longitude</th>
 				<th></th>
 			</tr>
 		</thead>
@@ -44,6 +49,8 @@
 		<tr>
 			<td class="span2" data-bind="text: name"></td>
 			<td class="span2" data-bind="text: address"></td>
+			<td class="span2" data-bind="text: lat"></td>
+			<td class="span2" data-bind="text: lon"></td>
 			<td class="span2"><button class="btn btn-danger" data-bind="click: $root.removeServer">Remove</button></td>
 		</tr>
 		</tbody>
@@ -57,22 +64,66 @@
 			self.servers = ko.observableArray([]);
 			self.servName = ko.observable();
 			self.servAddress = ko.observable();
+			self.servLon = ko.observable();
+			self.servLat = ko.observable();
 			self.addServerButton = function() {
 				self.newServer(true);
 			};
 			self.addServer = function() {
-				self.servers.push(new Server(self.servName, self.servAddress));
+				
+				$.ajax({
+					type : "POST",
+					beforeSend: function (request)
+		            {
+		                request.setRequestHeader("Authorization", $.cookie("Authorization"));
+		            },
+					url : "http://localhost:18080/central/locate?"
+							+"name="+self.servName()
+							+"&adr="+self.servAddress()
+							+"&lat="+self.servLat()
+							+"&lon="+self.servLon(),
+					
+					contentType : "application/json; charset=utf-8"
+				}).done(function(data, textStatus, jqXHR) {
+					console.log(jqXHR.status);
+					if (jqXHR.status == 200) {
+						console.log("Server added!");
+						self.servers.push(new Server(self.servName(), self.servAddress(), self.servLat(), self.servLon()));
+					}
+				}).fail(function(data, textStatus, jqXHR) {
+					console.log(data.status);
+					alert("Could not add server.");
+				});
 				self.newServer(false);
 			};
 
 			self.removeServer = function(server){
-				self.servers.remove(server);
+				$.ajax({
+					type : "DELETE",
+					beforeSend: function (request)
+		            {
+		                request.setRequestHeader("Authorization", $.cookie("Authorization"));
+		            },
+					url : "http://localhost:18080/central/locate/server/"
+							+server.name,
+					
+					contentType : "application/json; charset=utf-8"
+				}).done(function(data, textStatus, jqXHR) {
+					console.log(jqXHR.status);
+					if (jqXHR.status == 200) {
+						console.log("Server removed!");
+						self.servers.remove(server);
+					}
+				}).fail(function(data, textStatus, jqXHR) {
+					console.log(data.status);
+					alert("Could not remove server.");
+				});
 			};
 
 			$.getJSON("http://localhost:18080/central/locate/", function(
 					allData) {
 				var mappedServers = $.map(allData, function(item) {
-					return new Server(item.name, item.address)
+					return new Server(item.name, item.address, item.latitude, item.longitude);
 				});
 				self.servers(mappedServers);
 			});

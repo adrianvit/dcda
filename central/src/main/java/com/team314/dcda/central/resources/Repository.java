@@ -45,13 +45,15 @@ public class Repository {
 	
 	
 	@POST
-	public Response addServer(@QueryParam("name") String name,@QueryParam("adr") String address)
+	public Response addServer(@QueryParam("name") String name,@QueryParam("adr") String address, @QueryParam("lat") Double latitude, @QueryParam("lon") Double longitude)
 	{
 		try
 		{	
 			Server temp = new Server();
 			temp.setName(name);
 			temp.setAddress(address);
+			temp.setLatitude(latitude);
+			temp.setLongitude(longitude);
 			serverDAO.create(temp);
 			return Response.status(200).build();
 		}catch(Exception e)
