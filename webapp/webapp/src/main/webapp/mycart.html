@@ -12,6 +12,7 @@
 <script src="http://ajax.aspnetcdn.com/ajax/knockout/knockout-2.2.1.js"></script>
 <script src="products.js"></script>
 <script src="objstorage.js"></script>
+<script src="utils.js"></script>
 <script src="http://maps.google.com/maps?file=api&amp;v=2&amp;sensor=false" 
            type="text/javascript"></script> 
 </head>
@@ -130,7 +131,29 @@
     				 for(var i = 0; i < self.shoppingList().length; i++){
     				 console.log(self.shoppingList()[i].product_id + " "+ self.shoppingList()[i].description + " "+
     						 self.shoppingList()[i].price + " " + self.myquantity()[i]());
+    				 
+	     				$.ajax({
+	    					type : "POST",
+	    					beforeSend: function (request)
+	    		            {
+	    		                request.setRequestHeader("Authorization", $.cookie("Authorization"));
+	    		            },
+	    					url : "http://localhost:18080/local/users/" + $.cookie("UserId") 
+	    					+ "/orders?" + "pid=" + self.shoppingList()[i].product_id
+	    					+ "&host=" + self.shoppingList()[i].host
+	    					+ "&quantity=" + self.myquantity()[i](),
+	    					async: false,
+	    					crossDomain: true
+	    				}).done(function(data, textStatus, jqXHR) {
+	    					console.log(jqXHR.status);
+	    					if (jqXHR.status == 200) {
+	    						console.log("Order sent! " + data.productid);
+	    					}
+	    				}).fail(function(data, textStatus, jqXHR) {
+	    					console.log(data.status);
+	    				});
     				 }
+    				 alert("Your order has been sent!");
     			};
 			};
 			ko.applyBindings(new MyCartViewModel());

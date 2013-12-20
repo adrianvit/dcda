@@ -5,6 +5,7 @@ import javax.ejb.Stateless;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
+import javax.ws.rs.OPTIONS;
 import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
@@ -47,7 +48,31 @@ public class ProductResource {
 				Product temp = this.productdao.find(id);
 				if(temp != null)
 				{
-					return Response.status(200).entity(temp).build();			
+					//add header Access-Control-Allow-Credentials true
+					return Response.status(200).header("Access-Control-Allow-Origin", "*").entity(temp).build();			
+				}
+				else
+				{
+					throw new WebApplicationException(new Throwable("User not found!"), 404);
+				}		
+			
+		}catch(Exception e)
+		{
+			return Response.status(500).build();
+		}
+		
+	}
+	
+	@OPTIONS
+	@Produces({"application/json"})
+	public Response getOptions(@PathParam("id") Integer id, @Context HttpHeaders headers)
+	{
+		try {
+				Product temp = this.productdao.find(id);
+				if(temp != null)
+				{
+					//add header Access-Control-Allow-Credentials true
+					return Response.status(200).header("Access-Control-Allow-Origin", "*").entity(temp).build();			
 				}
 				else
 				{

@@ -12,7 +12,7 @@
 <script src="http://ajax.aspnetcdn.com/ajax/knockout/knockout-2.2.1.js"></script>
 <script src="products.js"></script>
 <script src="objstorage.js"></script>
-
+<script src="utils.js"></script>
 </head>
 <body>
   
@@ -86,25 +86,58 @@
 					  console.log('shopping list' + self.shoppingList());
 					  window.location.replace("http://localhost:18080/webapp/mycart.html");
     			};
-				self.searchProduct = function(){
-					 $.getJSON("http://localhost:18080/local/search?key=" + self.searchName + "&ttl=2", function(allData) {
-			        var mappedProducts = $.map(allData, function(item) { return new Product(item.productid, item.description, item.price, item.quantity) });
-			        self.searchProducts(mappedProducts);
-			    }); 
-			    self.flag(true);
+    			
+				self.searchProduct = function()
+				{
+					 $.getJSON("http://localhost:18080/local/search?key=" + self.searchName() + "&ttl=2", function(allData) 
+							 {
+			        			var mappedProducts = new Array(); 
+			        			for(var i = 0; i < allData.length; i++)
+			        			{ 
+							        var item = allData[i];				
+			        				console.log(item);
+			        				$.ajax({
+			        					type : "GET",
+			        					url : item,
+			        					async: false,
+			        					crossDomain: true
+			        				}).done(function(data, textStatus, jqXHR) {
+			        					console.log(jqXHR.status);
+			        					if (jqXHR.status == 200) {
+			        						console.log("Got added! " + data.productid);
+			        						
+			        						var parser = document.createElement('a');
+			        						parser.href = item; 
+			        						console.log(parser.hostname);
+			        						mappedProducts[i] = new Product(data.productid, data.description, data.price, data.quantity, parser.hostname);
+			        					}
+			        				}).fail(function(data, textStatus, jqXHR) {
+			        					console.log(data.status);
+			        				});
+			        	
+			    				}
+			        				console.log(mappedProducts);
+			        				self.searchProducts(mappedProducts);
+			    					self.flag(true);
+							 });
 				};
+				
 				self.backToProducts = function(){
 				 	$.getJSON("http://localhost:18080/local/products/", function(allData) {
-			        var mappedProducts = $.map(allData, function(item) { return new Product(item.productid, item.description, item.price, item.quantity) });
+			        var mappedProducts = $.map(allData, function(item) { return new Product(item.productid, item.description, item.price, item.quantity, "localhost") });
 			        self.products(mappedProducts);
 			    });
 			    self.flag(false); 
 				};
+				
+				
 			    self.pageSize = ko.observable(3);
         		self.pageIndex = ko.observable(0);
         		self.previousPage = function() {
             		self.pageIndex(self.pageIndex() - 1);
         		};
+        		
+        		
         		self.nextPage = function() {
             		self.pageIndex(self.pageIndex() + 1);
     			};
@@ -112,7 +145,12 @@
     			self.pagedRows = ko.dependentObservable(function() {
        				 	var size = this.pageSize();
         				var start = this.pageIndex() * size;
-        				return self.products.slice(start, start + size);
+        				console.log("Flag: " + self.flag());
+        				if(self.flag() == true){
+        					return self.searchProducts.slice(start, start + size);
+        				} else {
+	        				return self.products.slice(start, start + size);
+        				}
     				}, self);
     			
 			    $.getJSON("http://localhost:18080/local/products/", function(allData) {
